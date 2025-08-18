@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { ping } from './awConfig.js';
 
+import { NotificationContext } from './context/NotificationContext.jsx';
+
 function App() {
+  const { test } = useContext(NotificationContext);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
@@ -22,7 +25,7 @@ function App() {
   }, [])
 
   return (
-    <p className="bg-red-200 btn">Hello</p>
+    <p className="bg-red-200 btn">Hello {test}</p>
   )
 }
 
