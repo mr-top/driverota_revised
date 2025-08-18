@@ -22,7 +22,7 @@ function App() {
   }, [])
 
   return (
-    <p className="bg-red-200">Hello</p>
+    <p className="bg-red-200 btn">Hello</p>
   )
 }
 
