@@ -4,11 +4,14 @@ import './index.css'
 import App from './App.jsx'
 
 import { NotifcationProvider } from './context/NotificationContext.jsx'
+import { ProfileProvider } from './context/ProfileContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <NotifcationProvider>
-      <App />
+      <ProfileProvider>
+        <App />
+      </ProfileProvider>
     </NotifcationProvider>
   </StrictMode>,
 )
