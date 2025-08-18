@@ -3,7 +3,7 @@ import { createContext, useState, useEffect } from "react";
 const NotificationContext = createContext();
 
 function NotificationProvider({children}) {
-  // notification format {id: 'xxx', display: true, state: 'error', msg: 'This failed because X'}
+  // notification format {id: 'xxx', display: true, state: 'error', msg: 'This failed', subMsg: 'X did this to Y'}
   const [notifications, setNotifications] = useState(JSON.parse(localStorage.getItem('notifications')) || []);
   
   useEffect(() => {

@@ -8,8 +8,8 @@ import { ID } from 'appwrite';
 
 function App() {
   const { notifications, addNotification, toggleNotification, removeNotification } = useContext(NotificationContext);
-  
-  const { test2 } = useContext(ProfileContext);
+
+  const { logout } = useContext(ProfileContext);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
@@ -29,8 +29,12 @@ function App() {
     connect();
   }, [])
 
+  useEffect(() => {
+    console.log(notifications);
+  }, [notifications])
+
   return (
-    <p>Perfect!</p>
+    <p onClick={logout}>Perfect!</p>
   )
 }
 
