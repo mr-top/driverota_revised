@@ -51,8 +51,19 @@ async function createSession (email, password) {
   }
 }
 
+async function getProfile (userId) {
+  try {
+    const result = await databases.getDocument(DatabaseID, UsersID, userId);
+
+    return {success: true, profile: result}
+  } catch (error) {
+    return {success: false, msg: error.message}
+  }
+}
+
 export {
   ping,
   deleteSession,
-  createSession
+  createSession,
+  getProfile
 }
