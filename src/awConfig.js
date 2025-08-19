@@ -5,7 +5,7 @@ const env = import.meta.env;
 const Endpoint = env.VITE_APPWRITE_ENDPOINT;
 const ProjectID = env.VITE_APPWRITE_PROJECT_ID;
 const DatabaseID = env.VITE_APPWRITE_DATABASE_ID;
-const UsersID = env.VITE.APPWRITE_USERS_ID;
+const UsersID = env.VITE_APPWRITE_USERS_ID;
 
 const client = new Client();
 
