@@ -13,9 +13,7 @@ function ProfileRoute() {
   async function fetchProfile() {
     const result = await getProfile();
 
-    if (result.success) {
-      setFetchedProfile({ fetched: true, ...result.profile });
-    }
+    setFetchedProfile({ fetched: true, logged: result.success, ...(result.profile || {}) });
   }
 
   return (
