@@ -13,6 +13,7 @@ import GuestRoute from './components/redirects/GuestRoute.jsx';
 import MainLayout from './components/MainLayout.jsx';
 import Signin from './components/Signin.jsx';
 import Signup from './components/Signup.jsx';
+import About from './components/About.jsx';
 
 function App() {
   const { notifications, addNotification, toggleNotification, removeNotification } = useContext(NotificationContext);
@@ -63,7 +64,7 @@ function App() {
 
             </Route>
 
-            <Route path='/zail' element={<p>zail</p>}>
+            <Route path='/about' element={<About />}>
 
             </Route>
 
