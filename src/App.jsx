@@ -12,6 +12,7 @@ import ProtectedRoute from './components/redirects/ProtectedRoute.jsx';
 import GuestRoute from './components/redirects/GuestRoute.jsx';
 import MainLayout from './components/MainLayout.jsx';
 import Signin from './components/Signin.jsx';
+import Signup from './components/Signup.jsx';
 
 function App() {
   const { notifications, addNotification, toggleNotification, removeNotification } = useContext(NotificationContext);
@@ -55,7 +56,7 @@ function App() {
                 <Route path='/signin' element={<Signin />}>
 
                 </Route>
-                <Route path='/signup'>
+                <Route path='/signup' element={<Signup />}>
 
                 </Route>
               </Route>
