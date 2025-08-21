@@ -7,7 +7,11 @@ import { ProfileContext } from './context/ProfileContext.jsx';
 
 import { ID } from 'appwrite';
 
+import ProfileRoute from './components/redirects/ProfileRoute.jsx';
+import ProtectedRoute from './components/redirects/ProtectedRoute.jsx';
+import GuestRoute from './components/redirects/GuestRoute.jsx';
 import MainLayout from './components/MainLayout.jsx';
+import Signin from './components/Signin.jsx';
 
 function App() {
   const { notifications, addNotification, toggleNotification, removeNotification } = useContext(NotificationContext);
@@ -41,13 +45,25 @@ function App() {
         <Routes>
           <Route path='/' element={<MainLayout />}>
 
-            <Route>
-              <Route path='/signin'>
+            <Route element={<ProfileRoute />}>
+
+              <Route element={<ProtectedRoute />}>
 
               </Route>
-              <Route path='/signup'>
 
+              <Route element={<GuestRoute />}>
+                <Route path='/signin' element={<Signin />}>
+
+                </Route>
+                <Route path='/signup'>
+
+                </Route>
               </Route>
+
+            </Route>
+
+            <Route path='/zail' element={<p>zail</p>}>
+
             </Route>
 
           </Route>
