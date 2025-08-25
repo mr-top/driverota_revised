@@ -1,6 +1,6 @@
 function Signin() {
   return (
-    <div className="flex flex-col justify-start items-center space-y-5 py-15 max-w-100 w-screen h-140 bg-base-200 border-[0.5px] border-base-content rounded-md">
+    <div className="flex flex-col justify-start items-center space-y-5 py-15 max-w-100 w-screen min-h-140 bg-base-200 border-[0.5px] border-base-content rounded-md">
       <div>
         <p className="text-3xl">Sign In</p>
       </div>
