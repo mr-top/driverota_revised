@@ -7,6 +7,7 @@ import { ProfileContext } from './context/ProfileContext.jsx';
 
 import { ID } from 'appwrite';
 
+import Nav from './components/navigation/Nav.jsx';
 import ProfileRoute from './components/redirects/ProfileRoute.jsx';
 import ProtectedRoute from './components/redirects/ProtectedRoute.jsx';
 import GuestRoute from './components/redirects/GuestRoute.jsx';
@@ -16,9 +17,9 @@ import Signup from './components/Signup.jsx';
 import About from './components/About.jsx';
 
 function App() {
+  const { localProfile, logout } = useContext(ProfileContext);
   const { notifications, addNotification, toggleNotification, removeNotification } = useContext(NotificationContext);
 
-  const { logout } = useContext(ProfileContext);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
@@ -41,13 +42,11 @@ function App() {
   return (
     <div className='flex flex-col h-screen'>
       <BrowserRouter>
-        <nav className='flex-initial bg-green-400 h-10'>
-
-        </nav>
+        <Nav localProfile={localProfile} />
         <Routes>
           <Route path='/' element={<MainLayout />}>
 
-            <Route element={<ProfileRoute />}>
+            <Route element={<ProfileRoute localProfile={localProfile} />}>
 
               <Route element={<ProtectedRoute />}>
 

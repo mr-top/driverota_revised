@@ -3,15 +3,19 @@ import { Outlet } from "react-router-dom";
 
 import { getProfile } from "../../awConfig";
 
-function ProfileRoute() {
+function ProfileRoute({localProfile}) {
   const [fetchedProfile, setFetchedProfile] = useState({ fetched: false });
 
   useEffect(() => {
-    fetchProfile();
+    if (localProfile.logged) {
+      fetchProfile(localProfile.$id);
+    } else {
+      setFetchedProfile({fetched: true, logged: false});
+    }
   }, []);
 
-  async function fetchProfile() {
-    const result = await getProfile();
+  async function fetchProfile(userId) {
+    const result = await getProfile(userId);
 
     setFetchedProfile({ fetched: true, logged: result.success, ...(result.profile || {}) });
   }
