@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 function Signup() {
+  const [isStudent, setIsStudent] = useState(true);
+
   return (
     <div className="flex flex-col justify-start items-center space-y-5 py-15 max-w-100 w-screen min-h-140 bg-base-200 border-[0.5px] border-base-content rounded-md">
       <div>
@@ -21,13 +25,15 @@ function Signup() {
           <label htmlFor="signup_password2" className="text-sm opacity-70">Confirm password:</label>
           <input id='signup_password2' type="text" className="input" />
         </div>
-        <div className="flex flex-col">
-          <label htmlFor="signup_code" className="text-sm opacity-70">Instructor code:</label>
-          <input id='signup_code' type="text" className="input" />
-        </div>
+        {isStudent &&
+          <div className="flex flex-col">
+            <label htmlFor="signup_code" className="text-sm opacity-70">Instructor code:</label>
+            <input id='signup_code' type="text" className="input" />
+          </div>
+        }
         <div className="flex space-x-4">
           <label htmlFor="signup_code" className="opacity-70">Student:</label>
-          <input id='signup_code' type="checkbox" defaultChecked className="checkbox" />
+          <input id='signup_code' type="checkbox" className="checkbox" checked={isStudent} onClick={() => setIsStudent(prev => !prev)} />
         </div>
       </div>
       <div className="flex space-x-5">
