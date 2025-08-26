@@ -33,7 +33,7 @@ function Signup() {
         }
         <div className="flex space-x-4">
           <label htmlFor="signup_code" className="opacity-70">Student:</label>
-          <input id='signup_code' type="checkbox" className="checkbox" checked={isStudent} onClick={() => setIsStudent(prev => !prev)} />
+          <input id='signup_code' type="checkbox" className="checkbox" checked={isStudent} onChange={() => setIsStudent(prev => !prev)} />
         </div>
       </div>
       <div className="flex space-x-5">
