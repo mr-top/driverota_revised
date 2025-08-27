@@ -17,7 +17,7 @@ import Signup from './components/Signup.jsx';
 import About from './components/About.jsx';
 
 function App() {
-  const { localProfile, logout } = useContext(ProfileContext);
+  const { localProfile, logout, login } = useContext(ProfileContext);
   const { notifications, addNotification, toggleNotification, removeNotification } = useContext(NotificationContext);
 
   const [connected, setConnected] = useState(false);
@@ -46,13 +46,13 @@ function App() {
         <Routes>
           <Route path='/' element={<MainLayout />}>
 
-            <Route element={<ProfileRoute localProfile={localProfile} />}>
+            <Route element={<ProfileRoute localProfile={localProfile}/>}>
 
-              <Route element={<ProtectedRoute />}>
+              <Route element={<ProtectedRoute logout={logout}/>}>
 
               </Route>
 
-              <Route element={<GuestRoute />}>
+              <Route element={<GuestRoute login={login}/>}>
                 <Route path='/signin' element={<Signin />}>
 
                 </Route>

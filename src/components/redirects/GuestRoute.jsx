@@ -1,6 +1,6 @@
 import { useOutletContext, Outlet, Navigate } from "react-router-dom"
 
-function GuestRoute() {
+function GuestRoute({login}) {
   const { fetchedProfile } = useOutletContext();
 
   console.log('this is coming from protected route')
@@ -8,7 +8,7 @@ function GuestRoute() {
 
   return (
     !fetchedProfile.logged ?
-      <Outlet /> :
+      <Outlet context={{login}}/> :
       <Navigate />
   )
 }

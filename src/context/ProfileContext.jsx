@@ -7,9 +7,9 @@ import { deleteSession, createSession } from "../awConfig";
 
 import { NotificationContext } from "./NotificationContext";
 
-function ProfileProvider({children}) {
+function ProfileProvider({ children }) {
   // profile format {logged: true, id: userID, email: userEmail}
-  const [localProfile, setLocalProfile] = useState(JSON.parse(localStorage.getItem('profile')) || {logged: false});
+  const [localProfile, setLocalProfile] = useState(JSON.parse(localStorage.getItem('profile')) || { logged: false });
 
   const { addNotification } = useContext(NotificationContext);
 
@@ -17,31 +17,33 @@ function ProfileProvider({children}) {
     localStorage.setItem('profile', JSON.stringify(localProfile));
   }, [localProfile])
 
-  async function logout () {
+  async function logout() {
     const result = await deleteSession();
 
     if (result.success) {
       setLocalProfile({});
     } else {
-      addNotification({id: ID.unique(), display: true, state: 'error', msg: 'Could not be logged out', subMsg: result.msg});
+      addNotification({ id: ID.unique(), display: true, state: 'error', msg: 'Could not be logged out', subMsg: result.msg });
     }
   }
 
-  async function login (email, password) {
+  async function login({ email, password }) {
     const result = await createSession(email, password);
 
     if (result.success) {
       setLocalProfile(result.profile);
     } else {
-      addNotification({id: ID.unique(), display: true, state: 'error', msg: 'Could not be logged in', subMsg: result.msg});
+      addNotification({ id: ID.unique(), display: true, state: 'error', msg: 'Could not be logged in', subMsg: result.msg });
     }
+
+    return result;
   }
 
   return (
-    <ProfileContext.Provider value={{logout, login, localProfile}}>
+    <ProfileContext.Provider value={{ logout, login, localProfile }}>
       {children}
     </ProfileContext.Provider>
   )
 }
 
-export {ProfileContext, ProfileProvider}
+export { ProfileContext, ProfileProvider }

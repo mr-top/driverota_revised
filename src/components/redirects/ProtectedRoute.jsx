@@ -1,6 +1,6 @@
 import { useOutletContext, Outlet, Navigate } from "react-router-dom"
 
-function ProtectedRoute() {
+function ProtectedRoute({logout}) {
   const { fetchedProfile } = useOutletContext();
 
   console.log('this is coming from protected route')
@@ -8,7 +8,7 @@ function ProtectedRoute() {
 
   return (
     fetchedProfile.logged ?
-      <Outlet /> :
+      <Outlet context={{logout}}/> :
       <Navigate />
   )
 }
