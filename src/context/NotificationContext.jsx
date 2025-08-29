@@ -17,7 +17,9 @@ function NotificationProvider({ children }) {
       notification.id = ID.unique();
     }
 
-    notification.expiry = add(new Date(), { seconds: notification.seconds })
+    if (notification.timer) {
+      notification.expiry = add(new Date(), { seconds: notification.seconds });
+    }
 
     setNotifications(prev => [...prev, notification]);
   }

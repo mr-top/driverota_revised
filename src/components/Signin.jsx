@@ -46,13 +46,13 @@ function Signin() {
           navigate('/about');
         }, 5000)
 
-        addNotification({ display: true, state: 'success', msg: 'Logged in!', seconds: 5 });
+        addNotification({ display: true, state: 'success', msg: 'Logged in!', timer: true, seconds: 5 });
       } else {
         throw Error(result.msg);
       }
 
     } catch (error) {
-      addNotification({ display: true, state: 'error', msg: error.message, seconds: 5 });
+      addNotification({ display: true, state: 'error', msg: error.message, timer: true, seconds: 10 });
     }
 
     setLoading(false);

@@ -16,25 +16,42 @@ function getColour(state) {
 
 function Notification({ notification, toggleNotification }) {
   const [display, setDisplay] = useState(notification.display);
-  const [past, setPast] = useState(isPast(notification.expiry));
+
+  const [inPast, setInPast] = useState(isPast(notification.expiry || new Date()));
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    if (!past) {
-      setTimeout(() => {
-        setDisplay(false);
-        toggleNotification(notification.id, false);
-      }, differenceInMilliseconds(notification.expiry, new Date()));
+    if (notification.timer) {
+      if (!inPast) {
+        const milliseconds = differenceInMilliseconds(notification.expiry, new Date());
+
+        for (let percentage = 0; percentage <= 300; percentage++) {
+          setTimeout(() => {
+            setCountdown(percentage);
+            if (percentage === 300) {
+              setInPast(true);
+            }
+          }, (milliseconds / 300) * percentage)
+        }
+      }
     }
   }, []);
 
+
   function toggle () {
-    setDisplay(false);
     toggleNotification(notification.id, false);
   }
 
+  useEffect(() => {
+    if (inPast) {
+      toggle();
+    }
+  }, [inPast]);
+
   return (
-    <div onClick={toggle} className={`${(display && !past) || 'hidden'} ${getColour(notification.state)} py-2 px-1 rounded-md w-50 h-12 hover:h-fit`}>
+    <div onClick={toggle} className={`${(display && !inPast) || 'hidden'} ${getColour(notification.state)} py-2 px-1 rounded-md w-50 h-12 hover:h-fit`}>
       <p className="text-xs">{notification.msg}</p>
+      <progress className="progress w-full" value={countdown} max={300}></progress>
     </div>
   )
 }
