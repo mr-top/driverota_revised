@@ -15,6 +15,7 @@ import MainLayout from './components/MainLayout.jsx';
 import Signin from './components/Signin.jsx';
 import Signup from './components/Signup.jsx';
 import About from './components/About.jsx';
+import Notifications from './components/Notifications.jsx';
 
 function App() {
   const { localProfile, logout, login } = useContext(ProfileContext);
@@ -43,6 +44,7 @@ function App() {
     <div className='flex flex-col h-screen'>
       <BrowserRouter>
         <Nav localProfile={localProfile} />
+        <Notifications />
         <Routes>
           <Route path='/' element={<MainLayout />}>
 

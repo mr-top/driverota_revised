@@ -22,9 +22,9 @@ function ProfileProvider({ children }) {
 
     if (result.success) {
       setLocalProfile({});
-    } else {
-      addNotification({ id: ID.unique(), display: true, state: 'error', msg: 'Could not be logged out', subMsg: result.msg });
-    }
+    } 
+
+    return result;
   }
 
   async function login({ email, password }) {
@@ -32,9 +32,7 @@ function ProfileProvider({ children }) {
 
     if (result.success) {
       setLocalProfile(result.profile);
-    } else {
-      addNotification({ id: ID.unique(), display: true, state: 'error', msg: 'Could not be logged in', subMsg: result.msg });
-    }
+    } 
 
     return result;
   }

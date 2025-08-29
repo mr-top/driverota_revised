@@ -1,7 +1,9 @@
-import { useState, useReducer, useEffect } from "react";
+import { useState, useReducer, useEffect, useContext } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
 import { verifyEmail, verifyPassword } from './utils/verifyInputs.js';
+
+import { NotificationContext } from "../context/NotificationContext.jsx";
 
 function reducerCredentials(state, action) {
   switch (action.type) {
@@ -12,30 +14,15 @@ function reducerCredentials(state, action) {
   }
 }
 
-function reducerErrors(state, action) {
-  switch (action.type) {
-    case 'display':
-      return { ...state, display: action.payload }
-    case 'success':
-      return { ...state, success: action.payload }
-    case 'msg':
-      return { ...state, msg: action.payload }
-  }
-}
-
 function Signin() {
   const navigate = useNavigate();
   const { login } = useOutletContext();
 
+  const { addNotification } = useContext(NotificationContext);
+
   const [credentials, dispatchCredentials] = useReducer(reducerCredentials, {
     email: '',
     password: ''
-  });
-
-  const [errors, dispatchErrors] = useReducer(reducerErrors, {
-    display: false,
-    success: false,
-    msg: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -43,49 +30,33 @@ function Signin() {
   async function submit() {
     setLoading(true);
 
-    let display = false;
-    let success = false;
-    let message = '';
-    // validate inputs
     try {
       if (!verifyEmail(credentials.email) && !verifyPassword(credentials.password)) {
-        message = 'Sorry! Email and password are both in the wrong format';
-        throw Error();
+        throw Error('Sorry! Email and password are both in the wrong format');
       } else if (!verifyEmail(credentials.email)) {
-        message = 'Sorry! Email is in the wrong format';
-        throw Error();
+        throw Error('Sorry! Email is in the wrong format');
       } else if (!verifyPassword(credentials.password)) {
-        message = 'Sorry! Password is in the wrong format';
-        throw Error();
+        throw Error('Sorry! Password is in the wrong format');
       }
 
       const result = await login(credentials);
 
       if (result.success) {
-        display = true;
-        success = true;
-        
         setTimeout(() => {
-          navigate('/zail');
-        }, 5000);
+          navigate('/about');
+        }, 5000)
+
+        addNotification({ display: true, state: 'success', msg: 'Logged in!', seconds: 5 });
+      } else {
+        throw Error(result.msg);
       }
 
-      message = result.msg;
-
-      throw Error();
     } catch (error) {
-      display = true;
-      dispatchErrors({ type: 'display', payload: display });
-      dispatchErrors({ type: 'success', payload: success });
-      dispatchErrors({ type: 'msg', payload: message });
+      addNotification({ display: true, state: 'error', msg: error.message, seconds: 5 });
     }
 
     setLoading(false);
   }
-
-  useEffect(() => {
-    console.log(errors);
-  }, [errors])
 
   return (
     <div className="flex flex-col justify-start items-center space-y-5 py-15 max-w-100 w-screen min-h-140 bg-base-200 border-[0.5px] border-base-content rounded-md">
@@ -111,10 +82,6 @@ function Signin() {
           <p>Click <a className="font-semibold">here</a> to reset it</p>
         </div>
       </div>
-      {errors.display &&
-        <div className="w-60">
-          <p className={`${errors.success ? 'text-success' : 'text-error'}`}>{errors.msg}</p>
-        </div>}
     </div>
   )
 }
