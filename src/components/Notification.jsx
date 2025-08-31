@@ -48,10 +48,16 @@ function Notification({ notification, toggleNotification }) {
     }
   }, [inPast]);
 
+  useEffect(() => {
+    setDisplay(notification.display);
+  }, [notification])
+
   return (
-    <div onClick={toggle} className={`${(display && !inPast) || 'hidden'} ${getColour(notification.state)} py-2 px-1 rounded-md w-50 h-12 hover:h-fit`}>
-      <p className="text-xs">{notification.msg}</p>
-      <progress className="progress w-full" value={countdown} max={300}></progress>
+    <div onClick={toggle} className={`${(display && !inPast) || 'hidden'} ${getColour(notification.state)} flex flex-col justify-between h-12 hover:h-20 rounded-md overflow-hidden w-50`}>
+      <div className="flex-1 overflow-hidden p-2">
+        <p className="text-xs">{notification.msg}</p>
+      </div>
+      <progress className="flex-initial h-1 opacity-40 progress w-full" value={countdown} max={300}></progress>
     </div>
   )
 }
