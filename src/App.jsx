@@ -48,28 +48,28 @@ function App() {
         <Routes>
           <Route path='/' element={<MainLayout />}>
 
-            <Route element={<ProfileRoute localProfile={localProfile}/>}>
+            <Route element={<ProfileRoute localProfile={localProfile} />}>
 
-              <Route element={<ProtectedRoute logout={logout}/>}>
+              <Route element={<ProtectedRoute logout={logout} />}>
+                <Route path='/protected' element={<p>protected</p>}/>
+                </Route>
+
+                <Route element={<GuestRoute login={login} />}>
+                  <Route path='/signin' element={<Signin />}>
+
+                  </Route>
+                  <Route path='/signup' element={<Signup />}>
+
+                  </Route>
+                </Route>
 
               </Route>
 
-              <Route element={<GuestRoute login={login}/>}>
-                <Route path='/signin' element={<Signin />}>
+              <Route path='/about' element={<About />}>
 
-                </Route>
-                <Route path='/signup' element={<Signup />}>
-
-                </Route>
               </Route>
 
             </Route>
-
-            <Route path='/about' element={<About />}>
-
-            </Route>
-
-          </Route>
         </Routes>
         <footer className='flex-initial bg-red-400 h-10'>
 

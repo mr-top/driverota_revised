@@ -9,7 +9,7 @@ function GuestRoute({login}) {
   return (
     !fetchedProfile.logged ?
       <Outlet context={{login}}/> :
-      <Navigate />
+      <Navigate to='/error'/>
   )
 }
 

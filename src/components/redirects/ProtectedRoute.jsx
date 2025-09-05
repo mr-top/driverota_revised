@@ -9,7 +9,7 @@ function ProtectedRoute({logout}) {
   return (
     fetchedProfile.logged ?
       <Outlet context={{logout}}/> :
-      <Navigate />
+      <Navigate to='/error'/>
   )
 }
 

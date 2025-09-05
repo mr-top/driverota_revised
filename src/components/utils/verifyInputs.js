@@ -8,5 +8,13 @@ function verifyPassword(password) {
   return passwordRegex.test(password);
 }
 
+function verifyName(name) {
+  const nameRegex = /^(([A-Za-z]+[\-\']?)*([A-Za-z]+)?\s)+([A-Za-z]+[\-\']?)*([A-Za-z]+)?$/;
+  return nameRegex.test(name);
+}
 
-export { verifyEmail, verifyPassword }
+function verifyCode(code) {
+  return code?.length >= 3;
+}
+
+export { verifyEmail, verifyPassword, verifyName, verifyCode }

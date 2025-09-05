@@ -8,7 +8,7 @@ function ProfileRoute({localProfile}) {
 
   useEffect(() => {
     if (localProfile.logged) {
-      fetchProfile(localProfile.$id);
+      fetchProfile(localProfile.id);
     } else {
       setFetchedProfile({fetched: true, logged: false});
     }
@@ -16,6 +16,8 @@ function ProfileRoute({localProfile}) {
 
   async function fetchProfile(userId) {
     const result = await getProfile(userId);
+
+    console.log(result);
 
     setFetchedProfile({ fetched: true, logged: result.success, ...(result.profile || {}) });
   }
