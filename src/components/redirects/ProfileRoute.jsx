@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import { getProfile, getSession } from "../../awConfig";
 
-function ProfileRoute({localProfile}) {
+function ProfileRoute({localProfile, logout}) {
   const [fetchedProfile, setFetchedProfile] = useState({ fetched: false });
 
   useEffect(() => {
@@ -18,6 +18,10 @@ function ProfileRoute({localProfile}) {
     const result = await getProfile(userId);
 
     const sessionResult = await getSession();
+
+    if (!sessionResult.success) {
+      await logout();
+    }
 
     setFetchedProfile({ fetched: true, logged: result.success && sessionResult.success, ...(result.success && sessionResult.success ? result.profile : {}) });
   }

@@ -20,9 +20,7 @@ function ProfileProvider({ children }) {
   async function logout() {
     const result = await deleteSession();
 
-    if (result.success) {
-      setLocalProfile({});
-    } 
+    setLocalProfile({});
 
     return result;
   }
@@ -32,7 +30,7 @@ function ProfileProvider({ children }) {
 
     if (result.success) {
       setLocalProfile(result.profile);
-    } 
+    }
 
     return result;
   }
