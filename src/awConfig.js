@@ -42,6 +42,16 @@ async function deleteSession() {
   }
 }
 
+async function getSession() {
+  try {
+    const result = await account.getSession('current');
+
+    return { success: true, session: result }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
 async function createSession(email, password) {
   try {
     const session = await account.createEmailPasswordSession(email, password);
@@ -102,6 +112,7 @@ async function sendCode(credentials) {
 export {
   ping,
   deleteSession,
+  getSession,
   createSession,
   getProfile,
   createUser,

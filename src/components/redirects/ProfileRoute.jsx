@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
-import { getProfile } from "../../awConfig";
+import { getProfile, getSession } from "../../awConfig";
 
 function ProfileRoute({localProfile}) {
   const [fetchedProfile, setFetchedProfile] = useState({ fetched: false });
@@ -17,9 +17,9 @@ function ProfileRoute({localProfile}) {
   async function fetchProfile(userId) {
     const result = await getProfile(userId);
 
-    console.log(result);
+    const sessionResult = await getSession();
 
-    setFetchedProfile({ fetched: true, logged: result.success, ...(result.profile || {}) });
+    setFetchedProfile({ fetched: true, logged: result.success && sessionResult.success, ...(result.success && sessionResult.success ? result.profile : {}) });
   }
 
   return (
