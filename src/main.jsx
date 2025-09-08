@@ -5,13 +5,16 @@ import App from './App.jsx'
 
 import { NotificationProvider } from './context/NotificationContext.jsx'
 import { ProfileProvider } from './context/ProfileContext.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <NotificationProvider>
-      <ProfileProvider>
-        <App />
-      </ProfileProvider>
-    </NotificationProvider>
+    <ThemeProvider>
+      <NotificationProvider>
+        <ProfileProvider>
+          <App />
+        </ProfileProvider>
+      </NotificationProvider>
+    </ThemeProvider>
   </StrictMode>,
 )
