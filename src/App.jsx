@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ping } from './awConfig.js';
 
 import { NotificationContext } from './context/NotificationContext.jsx';
@@ -17,6 +17,10 @@ import Signin from './components/Signin.jsx';
 import Signup from './components/Signup.jsx';
 import About from './components/About.jsx';
 import Notifications from './components/Notifications.jsx';
+import Settings from './components/Settings.jsx';
+import SettingsProfile from './components/SettingsProfile.jsx';
+import SettingsPrivacy from './components/SettingsPrivacy.jsx';
+import SettingsWeb from './components/SettingsWeb.jsx';
 
 function App() {
   const { localProfile, logout, login } = useContext(ProfileContext);
@@ -56,8 +60,11 @@ function App() {
                   <Route path='/protected' element={<p>protected</p>} />
                 </Route>
                 <Route path='/noclassroom' element={<p>Sorry no classroom!</p>} />
-                <Route >
-
+                <Route element={<Settings/>}>
+                  <Route path='/settings/profile' element={<SettingsProfile/>}/>
+                  <Route path='/settings/privacy' element={<SettingsPrivacy/>}/>
+                  <Route path='/settings/web' element={<SettingsWeb/>}/>
+                  <Route path='/settings/*' element={<Navigate to={'/settings/profile'}/>}/>
                 </Route>
               </Route>
 
