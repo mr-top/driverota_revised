@@ -6,6 +6,7 @@ const Endpoint = env.VITE_APPWRITE_ENDPOINT;
 const ProjectID = env.VITE_APPWRITE_PROJECT_ID;
 const DatabaseID = env.VITE_APPWRITE_DATABASE_ID;
 const UsersID = env.VITE_APPWRITE_USERS_ID;
+const ClassroomID = env.VITE_APPWRITE_CLASSROOM_ID;
 
 const createUserFunctionID = env.VITE_CREATE_USER_FUNCTION_ID;
 const sendCodeFunctionID = env.VITE_SEND_CODE_FUNCTION_ID;
@@ -109,6 +110,22 @@ async function sendCode(credentials) {
   }
 }
 
+async function getClassroom(credentials) {
+  try {
+    const result = await databases.getDocument(DatabaseID, ClassroomID, credentials.classroomId);
+
+    if (result) {
+      if (!result.students.includes(credentials.$id) && result.instructorId !== credentials.$id) {
+        throw Error("You're not found in this classroom");
+      };
+    }
+
+    return { success: true, classroom: result }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
 export {
   ping,
   deleteSession,
@@ -116,5 +133,6 @@ export {
   createSession,
   getProfile,
   createUser,
-  sendCode
+  sendCode,
+  getClassroom
 }

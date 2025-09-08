@@ -10,6 +10,7 @@ import { ID } from 'appwrite';
 import Nav from './components/navigation/Nav.jsx';
 import ProfileRoute from './components/redirects/ProfileRoute.jsx';
 import ProtectedRoute from './components/redirects/ProtectedRoute.jsx';
+import ClassroomRoute from './components/redirects/ClassroomRoute.jsx';
 import GuestRoute from './components/redirects/GuestRoute.jsx';
 import MainLayout from './components/MainLayout.jsx';
 import Signin from './components/Signin.jsx';
@@ -51,7 +52,13 @@ function App() {
             <Route element={<ProfileRoute localProfile={localProfile} logout={logout} />}>
 
               <Route element={<ProtectedRoute logout={logout} />}>
-                <Route path='/protected' element={<p>protected</p>} />
+                <Route element={<ClassroomRoute />}>
+                  <Route path='/protected' element={<p>protected</p>} />
+                </Route>
+                <Route path='/noclassroom' element={<p>Sorry no classroom!</p>} />
+                <Route >
+
+                </Route>
               </Route>
 
               <Route element={<GuestRoute login={login} />}>
