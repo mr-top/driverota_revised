@@ -126,6 +126,31 @@ async function getClassroom(credentials) {
   }
 }
 
+async function updatePrivacy(userId, notification, newsletter) {
+  let notificationChanged = false;
+  let newsletterChanged = false;
+
+  try {
+    if (notification.changed) {
+      const result = await databases.updateDocument(DatabaseID, UsersID, userId, {
+        notificationPreference: notification.level
+      });
+      notificationChanged = true;
+    }
+
+    if (newsletter.changed) {
+      const result = await databases.updateDocument(DatabaseID, UsersID, userId, {
+        newsletterPreference: newsletter.level
+      });
+      newsletterChanged = true;
+    }
+
+    return {success: true, notificationChanged, newsletterChanged}
+  } catch (error) {
+    return {success: true, msg: error.message, notificationChanged, newsletterChanged}
+  }
+}
+
 export {
   ping,
   deleteSession,
@@ -134,5 +159,6 @@ export {
   getProfile,
   createUser,
   sendCode,
-  getClassroom
+  getClassroom,
+  updatePrivacy
 }
