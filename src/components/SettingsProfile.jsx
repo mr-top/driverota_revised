@@ -72,10 +72,6 @@ function SettingsProfile() {
   });
 
   useEffect(() => {
-    console.log(crucial);
-  }, [crucial]);
-
-  useEffect(() => {
     if (credentials.changed) {
       dispatchCredentials({ type: 'save', payload: false });
     }
