@@ -17,10 +17,6 @@ function reducerLevels(state, action) {
 function SettingsPrivacy() {
   const { fetchedProfile } = useOutletContext();
 
-  useEffect(() => {
-    console.log(fetchedProfile);
-  }, [])
-
   const [toSave, setToSave] = useState(false);
   const [loading, setLoading] = useState(false);
 
