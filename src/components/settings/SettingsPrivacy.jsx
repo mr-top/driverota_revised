@@ -1,7 +1,7 @@
 import { useReducer, useEffect, useState, use } from "react";
 import { useOutletContext } from "react-router-dom";
 
-import { updatePrivacy } from "../awConfig";
+import { updatePrivacy } from "../../awConfig";
 
 import { DocumentArrowUpIcon, DocumentCheckIcon } from "@heroicons/react/24/outline";
 

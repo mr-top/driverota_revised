@@ -147,7 +147,19 @@ async function updatePrivacy(userId, notification, newsletter) {
 
     return {success: true, notificationChanged, newsletterChanged}
   } catch (error) {
-    return {success: true, msg: error.message, notificationChanged, newsletterChanged}
+    return {success: false, msg: error.message, notificationChanged, newsletterChanged}
+  }
+}
+
+async function updateAccount(userId, crucial) {
+  let emailChanged = false;
+  let passwordChanged = false;
+
+  try {
+
+    return {success: true, emailChanged, passwordChanged}
+  } catch (error) {
+    return {success: false, msg: error.message, emailChanged, passwordChanged}
   }
 }
 

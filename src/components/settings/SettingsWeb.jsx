@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
-import { ThemeContext } from "../context/ThemeContext";
+import { ThemeContext } from "../../context/ThemeContext";
 
 function SettingsWeb() {
   const { fetchedProfile } = useOutletContext();

@@ -17,10 +17,10 @@ import Signin from './components/Signin.jsx';
 import Signup from './components/Signup.jsx';
 import About from './components/About.jsx';
 import Notifications from './components/Notifications.jsx';
-import Settings from './components/Settings.jsx';
-import SettingsProfile from './components/SettingsProfile.jsx';
-import SettingsPrivacy from './components/SettingsPrivacy.jsx';
-import SettingsWeb from './components/SettingsWeb.jsx';
+import Settings from './components/settings/Settings.jsx';
+import SettingsProfile from './components/settings/SettingsProfile.jsx';
+import SettingsPrivacy from './components/settings/SettingsPrivacy.jsx';
+import SettingsWeb from './components/settings/SettingsWeb.jsx';
 
 function App() {
   const { localProfile, logout, login } = useContext(ProfileContext);
