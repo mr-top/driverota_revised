@@ -89,7 +89,7 @@ function Signup() {
     try {
       if (!credentials.emailValid) throw Error("Email format is not valid to send code");
 
-      const result = await sendCode(credentials);
+      const result = await sendCode(credentials.email);
 
       if (result.success) {
         addNotification({ display: true, state: 'success', msg: result.msg, timer: true, seconds: 15 });

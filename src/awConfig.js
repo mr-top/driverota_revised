@@ -10,6 +10,8 @@ const ClassroomID = env.VITE_APPWRITE_CLASSROOM_ID;
 
 const createUserFunctionID = env.VITE_CREATE_USER_FUNCTION_ID;
 const sendCodeFunctionID = env.VITE_SEND_CODE_FUNCTION_ID;
+const updateAccountFunctionID = env.VITE_UPDATE_ACCOUNT_FUNCTION_ID;
+const updatePersonalFunctionID = env.VITE_UPDATE_PERSONAL_FUNCTION_ID;
 
 const client = new Client();
 
@@ -92,12 +94,12 @@ async function getProfile(userId) {
   }
 }
 
-async function sendCode(credentials) {
+async function sendCode(email) {
   try {
     const result = await functions.createExecution(sendCodeFunctionID,
       JSON.stringify(
         {
-          email: credentials.email
+          email
         }
       )
     ).then(result => JSON.parse(result.responseBody));
@@ -151,15 +153,39 @@ async function updatePrivacy(userId, notification, newsletter) {
   }
 }
 
-async function updateAccount(userId, crucial) {
-  let emailChanged = false;
-  let passwordChanged = false;
-
+async function updateAccount(userId, email, password, code) {
   try {
+    const result = await functions.createExecution(updateAccountFunctionID, 
+      JSON.stringify(
+        {
+          userId, 
+          email,
+          password,
+          code
+        }
+      )
+    ).then(result => JSON.parse(result.responseBody));
 
-    return {success: true, emailChanged, passwordChanged}
+    return result
   } catch (error) {
-    return {success: false, msg: error.message, emailChanged, passwordChanged}
+    return {success: false, msg: error.message}
+  }
+}
+
+async function updatePersonal(userId, name) {
+  try {
+    const result = await functions.createExecution(updatePersonalFunctionID,
+      JSON.stringify(
+        {
+          userId,
+          name
+        }
+      )
+    ).then(result => JSON.parse(result.responseBody));
+
+    return result;
+  } catch (error) {
+    return {success: false, msg: error.message}
   }
 }
 
@@ -172,5 +198,7 @@ export {
   createUser,
   sendCode,
   getClassroom,
-  updatePrivacy
+  updatePrivacy,
+  updateAccount,
+  updatePersonal
 }

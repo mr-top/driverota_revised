@@ -55,7 +55,8 @@ function Notification({ notification, toggleNotification }) {
   return (
     <div onClick={toggle} className={`${(display && !inPast) || 'hidden'} ${getColour(notification.state)} flex flex-col justify-between h-12 hover:h-20 rounded-md overflow-hidden w-50`}>
       <div className="flex-1 overflow-hidden p-2">
-        <p className="text-xs">{notification.msg}</p>
+        <p className="text-sm">{notification.msg}</p>
+        <p className="opacity-80 text-xs">{notification.subMsg}</p>
       </div>
       <progress className="flex-initial h-1 opacity-40 progress w-full" value={countdown} max={300}></progress>
     </div>
