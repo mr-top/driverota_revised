@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Functions } from 'appwrite';
+import { Client, Account, Databases, Functions, Storage, Query, ID } from 'appwrite';
 
 const env = import.meta.env;
 
@@ -13,6 +13,9 @@ const sendCodeFunctionID = env.VITE_SEND_CODE_FUNCTION_ID;
 const updateAccountFunctionID = env.VITE_UPDATE_ACCOUNT_FUNCTION_ID;
 const updatePersonalFunctionID = env.VITE_UPDATE_PERSONAL_FUNCTION_ID;
 
+const profileImagesStorageID = env.VITE_PROFILE_IMAGES_STORAGE_ID;
+const classroomImagesStorageID = env.VITE_CLASSROOM_IMAGES_STORAGE_ID;
+
 const client = new Client();
 
 client.
@@ -22,6 +25,7 @@ client.
 const account = new Account(client);
 const databases = new Databases(client);
 const functions = new Functions(client);
+const storage = new Storage(client);
 
 async function ping() {
   try {
@@ -147,18 +151,18 @@ async function updatePrivacy(userId, notification, newsletter) {
       newsletterChanged = true;
     }
 
-    return {success: true, notificationChanged, newsletterChanged}
+    return { success: true, notificationChanged, newsletterChanged }
   } catch (error) {
-    return {success: false, msg: error.message, notificationChanged, newsletterChanged}
+    return { success: false, msg: error.message, notificationChanged, newsletterChanged }
   }
 }
 
 async function updateAccount(userId, email, password, code) {
   try {
-    const result = await functions.createExecution(updateAccountFunctionID, 
+    const result = await functions.createExecution(updateAccountFunctionID,
       JSON.stringify(
         {
-          userId, 
+          userId,
           email,
           password,
           code
@@ -168,7 +172,7 @@ async function updateAccount(userId, email, password, code) {
 
     return result
   } catch (error) {
-    return {success: false, msg: error.message}
+    return { success: false, msg: error.message }
   }
 }
 
@@ -185,7 +189,35 @@ async function updatePersonal(userId, name) {
 
     return result;
   } catch (error) {
-    return {success: false, msg: error.message}
+    return { success: false, msg: error.message }
+  }
+}
+
+async function getClassroomImage(fileId) {
+  try {
+    const result = await storage.getFileView(classroomImagesStorageID, fileId);
+
+    const fetchResult = await fetch(result);
+
+    if (fetchResult.status !== 200) throw Error('Failed to load image');
+
+    return { success: true, image: result };
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
+async function updateClassroomImage(classroomId, image) {
+  try {
+    const result = await storage.createFile(classroomImagesStorageID, ID.unique(), image);
+
+    const classroomResult = await databases.updateDocument(DatabaseID, ClassroomID, classroomId, {
+      pictureId: result.$id
+    });
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, msg: error.message }
   }
 }
 
@@ -200,5 +232,7 @@ export {
   getClassroom,
   updatePrivacy,
   updateAccount,
-  updatePersonal
+  updatePersonal,
+  getClassroomImage,
+  updateClassroomImage
 }
