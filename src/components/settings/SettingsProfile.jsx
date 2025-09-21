@@ -7,11 +7,10 @@ import SettingsPersonal from "./SettingsPersonal";
 import SettingsAccount from "./SettingsAccount";
 import SettingsStudent from "./SettingsStudent";
 import SettingsInstructor from "./SettingsInstructor";
-import ClassroomCard from "../ClassroomCard";
 
 function SettingsProfile() {
   const { fetchedProfile } = useOutletContext();
-  const [ classroom, setClassroom ] = useState({fetched: false});
+  const [classroom, setClassroom] = useState({ fetched: false });
 
   useEffect(() => {
     fetchClassroom();
@@ -21,29 +20,25 @@ function SettingsProfile() {
     console.log(classroom);
   }, [classroom])
 
-  async function fetchClassroom () {
+  async function fetchClassroom() {
     const result = await getClassroom(fetchedProfile);
 
     if (result.success) {
-      setClassroom({fetched: true, found: true, ...result.classroom})
+      setClassroom({ fetched: true, found: true, ...result.classroom })
     } else {
-      setClassroom({fetched: true, found: false});
+      setClassroom({ fetched: true, found: false });
     }
   }
 
   return (
     <div className="px-10 space-y-5">
-      <SettingsPersonal fetchedProfile={fetchedProfile}/>
+      <SettingsPersonal fetchedProfile={fetchedProfile} />
 
-      <SettingsAccount fetchedProfile={fetchedProfile}/>
+      <SettingsAccount fetchedProfile={fetchedProfile} />
 
-      { fetchedProfile.student ? 
-        <SettingsStudent>
-          <ClassroomCard classroom={classroom}/>
-        </SettingsStudent> :
-        <SettingsInstructor>
-          <ClassroomCard classroom={classroom}/>
-        </SettingsInstructor> }
+      {fetchedProfile.student ?
+        <SettingsStudent /> :
+        <SettingsInstructor />}
     </div>
   )
 }
