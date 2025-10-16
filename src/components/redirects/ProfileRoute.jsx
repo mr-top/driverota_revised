@@ -15,15 +15,20 @@ function ProfileRoute({localProfile, logout}) {
   }, []);
 
   async function fetchProfile(userId) {
+    // fetch the existence of the profile, and also get the current session
     const result = await getProfile(userId);
 
     const sessionResult = await getSession();
 
-    if (!sessionResult.success) {
+    if (!sessionResult.success || sessionResult.session?.userId !== result.profile?.$id) {
+      // if there isn't session, log out
       await logout();
     }
+    
+    // user must exist and there must be a cloud logged session to be logged. Session user id and fetched profile id must also match
+    const logged = result.success && sessionResult.success && (result.profile.$id === sessionResult.session.userId);
 
-    setFetchedProfile({ fetched: true, logged: result.success && sessionResult.success, ...(result.success && sessionResult.success ? result.profile : {}) });
+    setFetchedProfile({ fetched: true, logged, ...(logged ? result.profile : {}) });
   }
 
   return (
