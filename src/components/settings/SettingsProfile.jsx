@@ -16,12 +16,10 @@ function SettingsProfile() {
     fetchClassroom();
   }, []);
 
-  useEffect(() => {
-    console.log(classroom);
-  }, [classroom])
-
   async function fetchClassroom() {
     const result = await getClassroom(fetchedProfile);
+
+    console.log(result);
 
     if (result.success) {
       setClassroom({ fetched: true, found: true, ...result.classroom })
@@ -36,9 +34,13 @@ function SettingsProfile() {
 
       <SettingsAccount fetchedProfile={fetchedProfile} />
 
-      {fetchedProfile.student ?
-        <SettingsStudent /> :
-        <SettingsInstructor />}
+      {classroom.fetched ? (classroom.found ? (fetchedProfile.student ?
+        <SettingsStudent classroom={classroom} fetchedProfile={fetchedProfile}/> :
+        <SettingsInstructor classroom={classroom} />)
+        :
+        <p>Classroom not found</p>)
+        :
+        <span className="loading loading-spinner loading-md"></span>}
     </div>
   )
 }

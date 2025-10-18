@@ -120,12 +120,6 @@ async function getClassroom(credentials) {
   try {
     const result = await databases.getDocument(DatabaseID, ClassroomID, credentials.classroomId);
 
-    if (result) {
-      if (!result.students.includes(credentials.$id) && result.instructorId !== credentials.$id) {
-        throw Error("You're not found in this classroom");
-      };
-    }
-
     return { success: true, classroom: result }
   } catch (error) {
     return { success: false, msg: error.message }
@@ -221,6 +215,21 @@ async function updateClassroomImage(classroomId, image) {
   }
 }
 
+async function updateClassroomName(classroomId, name) {
+  try {
+    const result = await databases.updateDocument(DatabaseID, ClassroomID, classroomId, 
+      {
+        name
+      }
+    )
+
+    return { success: true }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
+
 export {
   ping,
   deleteSession,
@@ -234,5 +243,6 @@ export {
   updateAccount,
   updatePersonal,
   getClassroomImage,
-  updateClassroomImage
+  updateClassroomImage,
+  updateClassroomName
 }
