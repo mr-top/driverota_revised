@@ -1,4 +1,10 @@
-import { useState, useReducer, useEffect } from "react";
+import { useState, useReducer, useEffect, useContext } from "react";
+
+import { NotificationContext } from "../../context/NotificationContext";
+
+import { lookupClassroom, changeClassroom } from "../../awConfig";
+
+import SettingsClassroomConfirmModal from "./SettingsClassroomConfirmModal";
 
 import { DocumentArrowUpIcon, DocumentCheckIcon } from "@heroicons/react/24/outline";
 
@@ -11,7 +17,9 @@ function reducer(state, action) {
   }
 }
 
-function SettingsStudent({ classroom, fetchedProfile }) {
+function SettingsStudent({ classroom, fetchedProfile, fetchClassroom }) {
+  const { addNotification } = useContext(NotificationContext);
+
   const [classroomId, dispatchClassroomId] = useReducer(reducer, {
     content: classroom.instructorCode,
     prevContent: classroom.instructorCode,
@@ -19,22 +27,63 @@ function SettingsStudent({ classroom, fetchedProfile }) {
     saved: false
   });
 
+  const [newClassroom, setNewClassroom] = useState();
+
+  const [loading, setLoading] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+
   const [changed, setChanged] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-      if (classroomId.changed) {
-        setChanged(true);
+    if (classroomId.changed) {
+      setChanged(true);
+    } else {
+      setChanged(false);
+    }
+  }, [classroomId]);
+
+  useEffect(() => {
+    if (changed) {
+      setSaved(false);
+    }
+  }, [changed]);
+
+  async function submitClassroomLookup() {
+    setLoading(true);
+
+    if (classroomId.changed) {
+      const result = await lookupClassroom(classroomId.content);
+
+      if (result.success) {
+        setNewClassroom(result.classroom);
+        document.getElementById('settings_student_classroom_confirm_modal').showModal();
       } else {
-        setChanged(false);
+        addNotification({ display: true, state: 'error', msg: 'Error!', subMsg: result.msg, timer: true, seconds: 15 });
       }
-    }, [classroomId]);
-  
-    useEffect(() => {
-      if (changed) {
-        setSaved(false);
+    }
+
+    setLoading(false);
+  }
+
+  async function submitClassroomChange() {
+    setModalLoading(true);
+
+    if (newClassroom) {
+      const result = await changeClassroom(fetchedProfile.$id, classroom.$id, newClassroom.$id);
+
+      document.getElementById('settings_student_classroom_confirm_modal').close();
+
+      if (result.success) {
+        addNotification({ display: true, state: 'success', msg: 'Success!', subMsg: result.msg, timer: true, seconds: 15 });
+        await fetchClassroom();
+      } else {
+        addNotification({ display: true, state: 'error', msg: 'Error!', subMsg: result.msg, timer: true, seconds: 15 });
       }
-    }, [changed]);
+    }
+
+    setModalLoading(false);
+  }
 
   return (
     <div className="flex flex-col space-y-3">
@@ -56,8 +105,9 @@ function SettingsStudent({ classroom, fetchedProfile }) {
         </div>
       </div>
       <div>
-        <button className="btn btn-primary">Save</button>
+        <button className="btn btn-primary" disabled={!changed || loading} onClick={submitClassroomLookup}>Save</button>
       </div>
+      <SettingsClassroomConfirmModal classroom={newClassroom} submitClassroomChange={submitClassroomChange} modalLoading={modalLoading} />
     </div>
   )
 }

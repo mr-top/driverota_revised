@@ -17,6 +17,7 @@ function SettingsProfile() {
   }, []);
 
   async function fetchClassroom() {
+    setClassroom({ fetched: false });
     const result = await getClassroom(fetchedProfile);
 
     console.log(result);
@@ -35,7 +36,7 @@ function SettingsProfile() {
       <SettingsAccount fetchedProfile={fetchedProfile} />
 
       {classroom.fetched ? (classroom.found ? (fetchedProfile.student ?
-        <SettingsStudent classroom={classroom} fetchedProfile={fetchedProfile}/> :
+        <SettingsStudent key={classroom.$id} classroom={classroom} fetchedProfile={fetchedProfile} fetchClassroom={fetchClassroom}/> :
         <SettingsInstructor classroom={classroom} />)
         :
         <p>Classroom not found</p>)

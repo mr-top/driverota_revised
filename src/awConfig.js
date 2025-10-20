@@ -12,6 +12,7 @@ const createUserFunctionID = env.VITE_CREATE_USER_FUNCTION_ID;
 const sendCodeFunctionID = env.VITE_SEND_CODE_FUNCTION_ID;
 const updateAccountFunctionID = env.VITE_UPDATE_ACCOUNT_FUNCTION_ID;
 const updatePersonalFunctionID = env.VITE_UPDATE_PERSONAL_FUNCTION_ID;
+const changeClassroomFunctionID = env.VITE_CHANGE_CLASSROOM_FUNCTION_ID;
 
 const profileImagesStorageID = env.VITE_PROFILE_IMAGES_STORAGE_ID;
 const classroomImagesStorageID = env.VITE_CLASSROOM_IMAGES_STORAGE_ID;
@@ -118,9 +119,58 @@ async function sendCode(email) {
 
 async function getClassroom(credentials) {
   try {
-    const result = await databases.getDocument(DatabaseID, ClassroomID, credentials.classroomId);
+    const userResult = await getProfile(credentials.$id);
+
+    let result;
+
+    if (userResult.success) {
+      const user = userResult.profile;
+      result = await databases.getDocument(DatabaseID, ClassroomID, user.classroomId);
+    } else {
+      result = await databases.getDocument(DatabaseID, ClassroomID, credentials.classroomId);
+    }
 
     return { success: true, classroom: result }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
+async function lookupClassroom(instructorCode) {
+  try {
+    const result = await databases.listDocuments(DatabaseID, ClassroomID, [
+      Query.equal('instructorCode', instructorCode)
+    ]);
+
+    if (!result.total) throw Error('Classroom not found with this ID');
+
+    const classroom = result.documents[0];
+
+    const instructorResult = await getProfile(classroom.instructorId);
+
+    if (instructorResult.success) {
+      classroom.instructorName = instructorResult.profile.name;
+    }
+
+    return { success: true, classroom }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
+async function changeClassroom(userId, oldClassroomId, newClassroomId) {
+  try {
+    const result = await functions.createExecution(changeClassroomFunctionID,
+      JSON.stringify(
+        {
+          userId,
+          oldClassroomId,
+          newClassroomId
+        }
+      )
+    ).then(result => JSON.parse(result.responseBody));
+
+    return { success: true, msg: result.msg }
   } catch (error) {
     return { success: false, msg: error.message }
   }
@@ -217,7 +267,7 @@ async function updateClassroomImage(classroomId, image) {
 
 async function updateClassroomName(classroomId, name) {
   try {
-    const result = await databases.updateDocument(DatabaseID, ClassroomID, classroomId, 
+    const result = await databases.updateDocument(DatabaseID, ClassroomID, classroomId,
       {
         name
       }
@@ -244,5 +294,7 @@ export {
   updatePersonal,
   getClassroomImage,
   updateClassroomImage,
-  updateClassroomName
+  updateClassroomName,
+  lookupClassroom,
+  changeClassroom
 }
