@@ -21,6 +21,8 @@ import Settings from './components/settings/Settings.jsx';
 import SettingsProfile from './components/settings/SettingsProfile.jsx';
 import SettingsPrivacy from './components/settings/SettingsPrivacy.jsx';
 import SettingsWeb from './components/settings/SettingsWeb.jsx';
+import Shelf from './components/shelf/Shelf.jsx';
+import ShelfCalendar from './components/shelf/ShelfCalendar.jsx';
 
 function App() {
   const { localProfile, logout, login } = useContext(ProfileContext);
@@ -57,7 +59,11 @@ function App() {
 
               <Route element={<ProtectedRoute logout={logout} />}>
                 <Route element={<ClassroomRoute />}>
-                  <Route path='/protected' element={<p>protected</p>} />
+                  <Route path='/shelf' element={<Shelf/>}>
+                    <Route path='/shelf/calendar' element={<ShelfCalendar/>}/>
+                    <Route path='/shelf/actions'/>
+                    <Route path='/shelf/classroom'/>
+                  </Route>
                 </Route>
                 <Route path='/noclassroom' element={<p>Sorry no classroom!</p>} />
                 <Route element={<Settings/>}>
