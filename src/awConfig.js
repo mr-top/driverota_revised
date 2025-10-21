@@ -7,6 +7,7 @@ const ProjectID = env.VITE_APPWRITE_PROJECT_ID;
 const DatabaseID = env.VITE_APPWRITE_DATABASE_ID;
 const UsersID = env.VITE_APPWRITE_USERS_ID;
 const ClassroomID = env.VITE_APPWRITE_CLASSROOM_ID;
+const MeetingsID = env.VITE_APPWRITE_MEETINGS_ID;
 
 const createUserFunctionID = env.VITE_CREATE_USER_FUNCTION_ID;
 const sendCodeFunctionID = env.VITE_SEND_CODE_FUNCTION_ID;
@@ -257,6 +258,20 @@ async function getClassroomImage(fileId) {
   }
 }
 
+async function getProfileImage(userId) {
+  try {
+    const result = await storage.getFileView(profileImagesStorageID, userId);
+
+    const fetchResult = await fetch(result);
+
+    if (fetchResult.status !== 200) throw Error('Failed to load image');
+
+    return { success: true, image: result };
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
 async function updateClassroomImage(classroomId, image) {
   try {
     const result = await storage.createFile(classroomImagesStorageID, ID.unique(), image);
@@ -285,6 +300,18 @@ async function updateClassroomName(classroomId, name) {
   }
 }
 
+async function getMeetings(classroomId) {
+  try {
+    const result = await databases.listDocuments(DatabaseID, MeetingsID, [
+      Query.equal('classroomId', classroomId)
+    ]);
+
+    return { success: true, meetings: result.documents }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
 
 export {
   ping,
@@ -302,5 +329,7 @@ export {
   updateClassroomImage,
   updateClassroomName,
   lookupClassroom,
-  changeClassroom
+  changeClassroom,
+  getMeetings,
+  getProfileImage
 }

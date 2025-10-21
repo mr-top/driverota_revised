@@ -1,18 +1,28 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useOutletContext } from "react-router-dom";
 
+import { getMeetings } from "../../awConfig";
+
 function Shelf() {
   const { classroom } = useOutletContext();
 
-  const [classroomMeetings, setClassroomMeetings] = useState('');
+  const [meetings, setMeetings] = useState([]);
 
   useEffect(() => {
-    console.log(classroom);
+    fetchMeetings();
   }, []);
 
-  // async function fetchMeetings () {
-  //   const result = await getMeetings()
-  // }
+  useEffect(() => {
+    console.log(meetings);
+  }, [meetings]);
+
+  async function fetchMeetings () {
+    const result = await getMeetings(classroom.$id);
+
+    if (result.success) {
+      setMeetings(result.meetings);
+    }
+  }
 
   return (
     <div className="flex flex-col bg-base-200 w-full sm:mx-10">
@@ -22,7 +32,7 @@ function Shelf() {
         <NavLink role="tab" to='/shelf/classroom' className={({ isActive }) => `tab ${isActive && 'tab-active'}`}>Classroom</NavLink>
       </div>
       <div className="flex-1 flex justify-center items-center min-h-80">
-        <Outlet />
+        <Outlet context={{classroom, meetings}}/>
       </div>
     </div>
   )

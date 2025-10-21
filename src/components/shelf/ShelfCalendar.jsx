@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import {
   add,
   eachDayOfInterval,
@@ -16,7 +17,11 @@ import {
   endOfWeek
 } from 'date-fns'
 
+import { getProfileImage } from '../../awConfig'
+
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+
+import anonymous from '../../assets/anonymous.webp'
 
 let colStartClasses = [
   '',
@@ -76,6 +81,8 @@ function classNames(...classes) {
 }
 
 function ShelfCalendar() {
+  const { classroom, meetings } = useOutletContext();
+
   let today = startOfToday()
   let [selectedDay, setSelectedDay] = useState(today)
   let [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
@@ -97,7 +104,7 @@ function ShelfCalendar() {
   }
 
   let selectedDayMeetings = meetings.filter((meeting) =>
-    isSameDay(parseISO(meeting.startDatetime), selectedDay)
+    isSameDay(meeting.startTime, selectedDay)
   )
 
   return (
@@ -176,7 +183,7 @@ function ShelfCalendar() {
 
                   <div className="w-1 h-1 mx-auto mt-1">
                     {meetings.some((meeting) =>
-                      isSameDay(parseISO(meeting.startDatetime), day)
+                      isSameDay(meeting.startTime, day)
                     ) && (
                       <div className="w-1 h-1 rounded-full bg-sky-500"></div>
                     )}
@@ -192,13 +199,13 @@ function ShelfCalendar() {
                 {format(selectedDay, 'MMM dd, yyy')}
               </time>
             </h2>
-            <ol className="mt-4 space-y-1 text-sm leading-6 text-base-content opacity-70">
+            <ol className="mt-4 space-y-1 text-sm leading-6 text-base-content">
               {selectedDayMeetings.length > 0 ? (
                 selectedDayMeetings.map((meeting) => (
-                  <Meeting meeting={meeting} key={meeting.id} />
+                  <Meeting meeting={meeting} key={meeting.$id} />
                 ))
               ) : (
-                <p>No meetings for today.</p>
+                <p className='opacity-70'>No meetings for today.</p>
               )}
             </ol>
           </section>
@@ -208,25 +215,36 @@ function ShelfCalendar() {
 }
 
 function Meeting({ meeting }) {
-  let startDateTime = parseISO(meeting.startDatetime)
-  let endDateTime = parseISO(meeting.endDatetime)
+  const [image, setImage] = useState(anonymous);
+
+  useEffect(() => {
+    fetchProfileImage();
+  }, []);
+
+  async function fetchProfileImage() {
+    const result = await getProfileImage(meeting.studentId);
+
+    if (result.success) {
+      setImage(result.image);
+    }
+  }
 
   return (
-    <li className="flex items-center px-4 py-2 space-x-4 group rounded-xl focus-within:bg-gray-100 hover:bg-gray-100">
+    <li className="flex items-center px-4 py-2 space-x-4 group rounded-xl focus-within:bg-base-300 hover:bg-base-300">
       <img
-        src={meeting.imageUrl}
+        src={image}
         alt=""
-        className="flex-none w-10 h-10 rounded-full"
+        className="flex-none size-10 rounded-full"
       />
       <div className="flex-auto">
-        <p className="text-gray-900">{meeting.name}</p>
-        <p className="mt-0.5">
-          <time dateTime={meeting.startDatetime}>
-            {format(startDateTime, 'h:mm a')}
+        <p className="text-base-content">{meeting.name}</p>
+        <p className="mt-0.5 opacity-70">
+          <time dateTime={meeting.startTime}>
+            {format(meeting.startTime, 'h:mm a')}
           </time>{' '}
           -{' '}
-          <time dateTime={meeting.endDatetime}>
-            {format(endDateTime, 'h:mm a')}
+          <time dateTime={meeting.endTime}>
+            {format(meeting.endTime, 'h:mm a')}
           </time>
         </p>
       </div>
