@@ -1,25 +1,29 @@
 import { useState, useEffect } from "react";
 import { useOutletContext, Outlet, useNavigate } from "react-router-dom"
 
+import ShelfPending from "../shelf/ShelfPending";
+
 import { getClassroom } from "../../awConfig";
 
-function ClassroomRoute () {
+function ClassroomRoute() {
   const navigate = useNavigate();
   const { fetchedProfile } = useOutletContext();
 
-  const [ classroom, setClassroom ] = useState({fetched: false});
+  const [classroom, setClassroom] = useState({ fetched: false });
 
   useEffect(() => {
-    console.log(fetchedProfile);
-
     fetchClassroom();
   }, []);
 
-  async function fetchClassroom () {
+  async function fetchClassroom() {
     const result = await getClassroom(fetchedProfile);
 
     if (result.success) {
-      setClassroom({fetched: true, ...result.classroom});
+      const classroom = result.classroom;
+
+      const allowed = classroom.students.includes(fetchedProfile.$id);
+
+      setClassroom({ fetched: true, allowed, ...classroom });
     } else {
       navigate('/noclassroom');
     }
@@ -27,7 +31,9 @@ function ClassroomRoute () {
 
   return (
     classroom.fetched ?
-      <Outlet context={{ classroom }}/> :
+      (classroom.allowed ?
+        <Outlet context={{ classroom }} /> :
+        <ShelfPending classroom={classroom} />) :
       <span className="loading loading-spinner loading-md"></span>
   )
 }

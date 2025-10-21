@@ -130,6 +130,12 @@ async function getClassroom(credentials) {
       result = await databases.getDocument(DatabaseID, ClassroomID, credentials.classroomId);
     }
 
+    const instructorResult = await getProfile(result.instructorId);
+
+    if (instructorResult.success) {
+      result.instructorName = instructorResult.profile.name;
+    }
+
     return { success: true, classroom: result }
   } catch (error) {
     return { success: false, msg: error.message }
