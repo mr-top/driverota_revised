@@ -21,7 +21,7 @@ function ClassroomRoute() {
     if (result.success) {
       const classroom = result.classroom;
 
-      const allowed = classroom.students.includes(fetchedProfile.$id);
+      const allowed = classroom.instructorId === fetchedProfile.$id || classroom.students.includes(fetchedProfile.$id);
 
       setClassroom({ fetched: true, allowed, ...classroom });
     } else {
