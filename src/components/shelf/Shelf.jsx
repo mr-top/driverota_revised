@@ -4,7 +4,7 @@ import { NavLink, Outlet, useOutletContext } from "react-router-dom";
 import { getMeetings } from "../../awConfig";
 
 function Shelf() {
-  const { classroom } = useOutletContext();
+  const { classroom, fetchedProfile } = useOutletContext();
 
   const [meetings, setMeetings] = useState([]);
 
@@ -32,7 +32,7 @@ function Shelf() {
         <NavLink role="tab" to='/shelf/classroom' className={({ isActive }) => `tab ${isActive && 'tab-active'}`}>Classroom</NavLink>
       </div>
       <div className="flex-1 flex justify-center items-center min-h-80">
-        <Outlet context={{classroom, meetings}}/>
+        <Outlet context={{classroom, meetings, fetchedProfile}}/>
       </div>
     </div>
   )

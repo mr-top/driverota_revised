@@ -23,6 +23,7 @@ import SettingsPrivacy from './components/settings/SettingsPrivacy.jsx';
 import SettingsWeb from './components/settings/SettingsWeb.jsx';
 import Shelf from './components/shelf/Shelf.jsx';
 import ShelfCalendar from './components/shelf/ShelfCalendar.jsx';
+import ShelfActions from './components/shelf/ShelfActions.jsx';
 
 function App() {
   const { localProfile, logout, login } = useContext(ProfileContext);
@@ -61,7 +62,7 @@ function App() {
                 <Route element={<ClassroomRoute />}>
                   <Route path='/shelf' element={<Shelf/>}>
                     <Route path='/shelf/calendar' element={<ShelfCalendar/>}/>
-                    <Route path='/shelf/actions'/>
+                    <Route path='/shelf/actions' element={<ShelfActions/>}/>
                     <Route path='/shelf/classroom'/>
                   </Route>
                 </Route>
