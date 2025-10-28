@@ -24,6 +24,10 @@ import SettingsWeb from './components/settings/SettingsWeb.jsx';
 import Shelf from './components/shelf/Shelf.jsx';
 import ShelfCalendar from './components/shelf/ShelfCalendar.jsx';
 import ShelfActions from './components/shelf/ShelfActions.jsx';
+import ActionSchedule from './components/shelf/ActionSchedule.jsx';
+import ActionReschedule from './components/shelf/ActionReschedule.jsx';
+import ActionCancel from './components/shelf/ActionCancel.jsx';
+import ActionSwap from './components/shelf/ActionSwap.jsx';
 
 function App() {
   const { localProfile, logout, login } = useContext(ProfileContext);
@@ -60,18 +64,23 @@ function App() {
 
               <Route element={<ProtectedRoute logout={logout} />}>
                 <Route element={<ClassroomRoute />}>
-                  <Route path='/shelf' element={<Shelf/>}>
-                    <Route path='/shelf/calendar' element={<ShelfCalendar/>}/>
-                    <Route path='/shelf/actions' element={<ShelfActions/>}/>
-                    <Route path='/shelf/classroom'/>
+                  <Route path='/shelf' element={<Shelf />}>
+                    <Route path='/shelf/calendar' element={<ShelfCalendar />} />
+                    <Route path='/shelf/actions' element={<ShelfActions />}>
+                      <Route path='/shelf/actions/schedule' element={<ActionSchedule />} />
+                      <Route path='/shelf/actions/reschedule' element={<ActionReschedule />} />
+                      <Route path='/shelf/actions/cancel' element={<ActionCancel />} />
+                      <Route path='/shelf/actions/swap' element={<ActionSwap />} />
+                    </Route>
+                    <Route path='/shelf/classroom' />
                   </Route>
                 </Route>
                 <Route path='/noclassroom' element={<p>Sorry no classroom!</p>} />
-                <Route element={<Settings/>}>
-                  <Route path='/settings/profile' element={<SettingsProfile/>}/>
-                  <Route path='/settings/privacy' element={<SettingsPrivacy/>}/>
-                  <Route path='/settings/web' element={<SettingsWeb/>}/>
-                  <Route path='/settings/*' element={<Navigate to={'/settings/profile'}/>}/>
+                <Route element={<Settings />}>
+                  <Route path='/settings/profile' element={<SettingsProfile />} />
+                  <Route path='/settings/privacy' element={<SettingsPrivacy />} />
+                  <Route path='/settings/web' element={<SettingsWeb />} />
+                  <Route path='/settings/*' element={<Navigate to={'/settings/profile'} />} />
                 </Route>
               </Route>
 

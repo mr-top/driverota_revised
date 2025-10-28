@@ -312,6 +312,18 @@ async function getMeetings(classroomId) {
   }
 }
 
+async function getPeople(peopleArray) {
+  try {
+    const result = await databases.listDocuments(DatabaseID, UsersID, [
+      Query.equal('$id', peopleArray)
+    ]);
+
+    return { success: true, people: result.documents }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
 
 export {
   ping,
@@ -331,5 +343,6 @@ export {
   lookupClassroom,
   changeClassroom,
   getMeetings,
-  getProfileImage
+  getProfileImage,
+  getPeople
 }
