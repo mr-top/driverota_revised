@@ -32,7 +32,7 @@ function ClassroomRoute() {
   return (
     classroom.fetched ?
       (classroom.allowed ?
-        <Outlet context={{ classroom, fetchedProfile }} /> :
+        <Outlet context={{ classroom, fetchedProfile, fetchClassroom }} /> :
         <ShelfPending classroom={classroom} />) :
       <span className="loading loading-spinner loading-md"></span>
   )

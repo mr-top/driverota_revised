@@ -24,10 +24,12 @@ import SettingsWeb from './components/settings/SettingsWeb.jsx';
 import Shelf from './components/shelf/Shelf.jsx';
 import ShelfCalendar from './components/shelf/ShelfCalendar.jsx';
 import ShelfActions from './components/shelf/ShelfActions.jsx';
+import ShelfClassroom from './components/shelf/ShelfClassroom.jsx';
 import ActionSchedule from './components/shelf/ActionSchedule.jsx';
 import ActionReschedule from './components/shelf/ActionReschedule.jsx';
 import ActionCancel from './components/shelf/ActionCancel.jsx';
 import ActionSwap from './components/shelf/ActionSwap.jsx';
+import ClassroomPending from './components/shelf/ClassroomPending.jsx';
 
 function App() {
   const { localProfile, logout, login } = useContext(ProfileContext);
@@ -72,7 +74,9 @@ function App() {
                       <Route path='/shelf/actions/cancel' element={<ActionCancel />} />
                       <Route path='/shelf/actions/swap' element={<ActionSwap />} />
                     </Route>
-                    <Route path='/shelf/classroom' />
+                    <Route path='/shelf/classroom' element={<ShelfClassroom />}>
+                      <Route path='/shelf/classroom/pending' element={<ClassroomPending />} />
+                    </Route>
                   </Route>
                 </Route>
                 <Route path='/noclassroom' element={<p>Sorry no classroom!</p>} />

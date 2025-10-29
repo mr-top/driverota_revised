@@ -14,6 +14,7 @@ const sendCodeFunctionID = env.VITE_SEND_CODE_FUNCTION_ID;
 const updateAccountFunctionID = env.VITE_UPDATE_ACCOUNT_FUNCTION_ID;
 const updatePersonalFunctionID = env.VITE_UPDATE_PERSONAL_FUNCTION_ID;
 const changeClassroomFunctionID = env.VITE_CHANGE_CLASSROOM_FUNCTION_ID;
+const updateJstudentFunctionID = env.VITE_UPDATE_JSTUDENT_FUNCTION_ID;
 
 const profileImagesStorageID = env.VITE_PROFILE_IMAGES_STORAGE_ID;
 const classroomImagesStorageID = env.VITE_CLASSROOM_IMAGES_STORAGE_ID;
@@ -315,10 +316,27 @@ async function getMeetings(classroomId) {
 async function getPeople(peopleArray) {
   try {
     const result = await databases.listDocuments(DatabaseID, UsersID, [
-      Query.equal('$id', peopleArray)
+      Query.equal('$id', ['placeholder', ...peopleArray]),
     ]);
 
     return { success: true, people: result.documents }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
+async function updateJstudent(userId, classroomId) {
+  try {
+    const result = await functions.createExecution(updateJstudentFunctionID,
+      JSON.stringify(
+        {
+          userId,
+          classroomId
+        }
+      )
+    ).then(result => JSON.parse(result.responseBody));
+
+    return result;
   } catch (error) {
     return { success: false, msg: error.message }
   }
@@ -344,5 +362,6 @@ export {
   changeClassroom,
   getMeetings,
   getProfileImage,
-  getPeople
+  getPeople,
+  updateJstudent
 }
