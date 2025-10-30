@@ -4,7 +4,7 @@ function MeetingDropdown({ meeting, fetchedProfile }) {
   const navigate = useNavigate();
 
   const isStudent = fetchedProfile.student;
-  const isIncluded = meeting.studentId = fetchedProfile.$id;
+  const isIncluded = meeting.studentId === fetchedProfile.$id;
 
   let content;
 
