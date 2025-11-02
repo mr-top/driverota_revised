@@ -6,17 +6,13 @@ import { getMeetings } from "../../awConfig";
 function Shelf() {
   const { classroom, fetchedProfile, fetchClassroom } = useOutletContext();
 
-  const [meetings, setMeetings] = useState([]);
+  const [meetings, setMeetings] = useState();
 
   useEffect(() => {
     fetchMeetings();
   }, []);
 
-  useEffect(() => {
-    console.log(meetings);
-  }, [meetings]);
-
-  async function fetchMeetings () {
+  async function fetchMeetings() {
     const result = await getMeetings(classroom.$id);
 
     if (result.success) {
@@ -32,7 +28,8 @@ function Shelf() {
         <NavLink role="tab" to='/shelf/classroom' className={({ isActive }) => `tab ${isActive && 'tab-active'}`}>Classroom</NavLink>
       </div>
       <div className="flex-1 flex justify-center items-center min-h-80">
-        <Outlet context={{classroom, meetings, fetchedProfile, fetchClassroom}}/>
+        {meetings ? <Outlet context={{ classroom, meetings, fetchedProfile, fetchClassroom }} />
+          : <span className="loading loading-spinner loading-md"></span>}
       </div>
     </div>
   )

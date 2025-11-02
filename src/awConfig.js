@@ -8,6 +8,7 @@ const DatabaseID = env.VITE_APPWRITE_DATABASE_ID;
 const UsersID = env.VITE_APPWRITE_USERS_ID;
 const ClassroomID = env.VITE_APPWRITE_CLASSROOM_ID;
 const MeetingsID = env.VITE_APPWRITE_MEETINGS_ID;
+const PrefsID = env.VITE_APPWRITE_PREFS_ID;
 
 const createUserFunctionID = env.VITE_CREATE_USER_FUNCTION_ID;
 const sendCodeFunctionID = env.VITE_SEND_CODE_FUNCTION_ID;
@@ -325,6 +326,40 @@ async function getPeople(peopleArray) {
   }
 }
 
+async function getInstructors(classroomId) {
+  try {
+    const result = await databases.listDocuments(DatabaseID, UsersID, [
+      Query.equal('student', false),
+      Query.equal('classroomId', classroomId)
+    ]);
+
+    return { success: true, instructors: result.documents }
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
+async function getPrefs(classroomId) {
+  try {
+    const instructorsResult = await databases.listDocuments(DatabaseID, UsersID, [
+      Query.equal('student', false),
+      Query.equal('classroomId', classroomId),
+      Query.select('$id')
+    ]);
+
+    const result = await databases.listDocuments(DatabaseID, PrefsID, [
+      Query.equal('$id', ['placeholder', ...instructorsResult.documents.map(instructor => instructor.$id)])
+    ]);
+
+    console.log(result);
+
+    return { success: true, prefs: result.documents }
+  } catch (error) {
+    console.log(error);
+    return { success: false, msg: error.message }
+  }
+}
+
 async function updateJstudent(userId, classroomId) {
   try {
     const result = await functions.createExecution(updateJstudentFunctionID,
@@ -363,5 +398,6 @@ export {
   getMeetings,
   getProfileImage,
   getPeople,
+  getPrefs,
   updateJstudent
 }

@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { Outlet, NavLink, useOutletContext } from "react-router-dom";
 
-import { getPeople } from "../../awConfig";
+import { getPeople, getPrefs } from "../../awConfig";
 
 function ShelfActions() {
   const { fetchedProfile, meetings, classroom } = useOutletContext();
 
-  const [recipients, setRecipients] = useState([]);
+  const [recipients, setRecipients] = useState();
+  const [instructorPrefs, setInstructorPrefs] = useState();
 
   useEffect(() => {
     fetchRecipients();
+    fetchPrefs();
   }, []);
 
   async function fetchRecipients() {
@@ -20,8 +22,26 @@ function ShelfActions() {
     }
   }
 
+  async function fetchPrefs() {
+    const result = await getPrefs(classroom.$id);
+
+    if (result.success) {
+      const purePrefs = result.prefs.map(pref => {
+        const schedule = JSON.parse(pref.schedule);
+        const holidays = pref.holidays.map(holiday => JSON.parse(holiday));
+        return {
+          ...pref,
+          schedule,
+          holidays
+        }
+      });
+
+      setInstructorPrefs(purePrefs);
+    }
+  }
+
   return (
-    <div className="flex justify-around w-full max-w-150 px-10 min-w-100 h-fit divide-x divide-base-content">
+    <div className="flex justify-around w-180 px-10 h-fit divide-x divide-base-content">
       <div className="flex-1 flex flex-col space-y-3">
         <NavLink to='/shelf/actions/schedule' className={({ isActive }) => `w-30 btn btn-secondary ${isActive ? '' : 'btn-soft'}`}>Book</NavLink>
         <NavLink to='/shelf/actions/reschedule' className={({ isActive }) => `w-30 btn btn-secondary ${isActive ? '' : 'btn-soft'}`}>Reschedule</NavLink>
@@ -38,7 +58,10 @@ function ShelfActions() {
           }
         </div>
       </div>
-      <Outlet context={{ fetchedProfile, meetings, classroom, recipients }} />
+      {(recipients && instructorPrefs) ? <Outlet context={{ fetchedProfile, meetings, classroom, recipients, instructorPrefs }} />
+        : <div className="flex-1 flex items-center justify-center">
+          <span className="loading loading-spinner loading-md"></span>
+          </div>}
     </div>
   )
 }
