@@ -20,12 +20,7 @@ function MeetingDropdown({ meeting, fetchedProfile }) {
         </>
       )
     } else {
-      // student is not involved in meeting, so it's someone else's meeting
-      content = (
-        <>
-          <li onClick={e => navigate('/shelf/actions/swap', { state: { meeting } })}><a>Swap</a></li>
-        </>
-      )
+      return <></>
     }
   } else {
     // user is instructor

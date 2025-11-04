@@ -28,7 +28,6 @@ import ShelfClassroom from './components/shelf/ShelfClassroom.jsx';
 import ActionSchedule from './components/shelf/ActionSchedule.jsx';
 import ActionReschedule from './components/shelf/ActionReschedule.jsx';
 import ActionCancel from './components/shelf/ActionCancel.jsx';
-import ActionSwap from './components/shelf/ActionSwap.jsx';
 import ClassroomPending from './components/shelf/ClassroomPending.jsx';
 
 function App() {
@@ -72,7 +71,6 @@ function App() {
                       <Route path='/shelf/actions/schedule' element={<ActionSchedule />} />
                       <Route path='/shelf/actions/reschedule' element={<ActionReschedule />} />
                       <Route path='/shelf/actions/cancel' element={<ActionCancel />} />
-                      <Route path='/shelf/actions/swap' element={<ActionSwap />} />
                     </Route>
                     <Route path='/shelf/classroom' element={<ShelfClassroom />}>
                       <Route path='/shelf/classroom/pending' element={<ClassroomPending />} />

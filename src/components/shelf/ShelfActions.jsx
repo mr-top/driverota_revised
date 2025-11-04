@@ -45,10 +45,7 @@ function ShelfActions() {
         <NavLink to='/shelf/actions/reschedule' className={({ isActive }) => `w-30 btn btn-secondary ${isActive ? '' : 'btn-soft'}`}>Reschedule</NavLink>
         <NavLink to='/shelf/actions/cancel' className={({ isActive }) => `w-30 btn btn-secondary ${isActive ? '' : 'btn-soft'}`}>Cancel</NavLink>
         <div className="flex flex-col py-4 space-y-3">
-          {fetchedProfile.student ?
-            <>
-              <NavLink to='/shelf/actions/swap' className={({ isActive }) => `w-30 btn btn-secondary ${isActive ? '' : 'btn-soft'}`}>Swap</NavLink>
-            </> :
+          {!fetchedProfile.student &&
             <>
               <NavLink to='/shelf/actions/holiday' className={({ isActive }) => `w-35 btn btn-secondary ${isActive ? '' : 'btn-soft'}`}>Book a holiday</NavLink>
               <NavLink to='/shelf/actions/holidaycancel' className={({ isActive }) => `w-35 btn btn-secondary ${isActive ? '' : 'btn-soft'}`}>Cancel a holiday</NavLink>
