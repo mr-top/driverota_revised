@@ -103,7 +103,7 @@ function ActionCancel() {
 
   return (
     <div className="flex-1 flex flex-col items-center space-y-4">
-      <div className="flex-1 flex flex-col mx-4">
+      <div className="flex-1 flex flex-col w-50">
         <div className="flex items-center space-x-2">
           <p>Former</p>
           {currentFound && <div>
