@@ -128,11 +128,11 @@ function ActionReschedule() {
   });
 
   useEffect(() => {
-  if (proposal.meeting) {
-    setProposalValid(true);
-  } else {
-    setProposalValid(false);
-  }
+    if (proposal.meeting !== '...') {
+      setProposalValid(true);
+    } else {
+      setProposalValid(false);
+    }
   }, [proposal.meeting])
 
   useEffect(() => {
@@ -159,7 +159,7 @@ function ActionReschedule() {
     }
   }, [meetings]);
 
-  async function onSubmitClick () {
+  async function onSubmitClick() {
     const foundMeeting = meetings.find(meeting => current.meeting === meeting.$id);
 
     if (foundMeeting && proposal.meeting !== '...') {
@@ -172,94 +172,94 @@ function ActionReschedule() {
   return (
     <div className="flex-1 flex flex-col items-center space-y-4">
       <div className="flex justify-center">
-      <div className="flex-1 flex flex-col mx-4">
-        <div className="flex items-center space-x-2">
-          <p>Former</p>
-          {currentFound && <div>
-            <CheckIcon className='size-4' />
-          </div>}
+        <div className="flex-1 flex flex-col mx-4">
+          <div className="flex items-center space-x-2">
+            <p>Former</p>
+            {currentFound && <div>
+              <CheckIcon className='size-4' />
+            </div>}
+          </div>
+          <div>
+            <label htmlFor="action_reschedule_recipient" className="text-sm opacity-70">{fetchedProfile.student ? 'Instructor' : 'Student'}:</label>
+            <select id="action_reschedule_recipient" className="select" value={current.recipient} onChange={e => dispatchCurrent({ type: 'recipient', payload: e.currentTarget.value })}>
+              <option value={'...'} disabled>...</option>
+              {recipients.map(recipient => <option value={recipient.$id} key={recipient.$id}>
+                {recipient.name}
+              </option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="action_reschedule_duration" className="text-sm opacity-70">Duration:</label>
+            <select id="action_reschedule_duration" className="select" value={current.duration} onChange={e => { }}>
+              <option value={'...'} disabled>...</option>
+              {current.duration !== '...' && <option>
+                {current.duration} minutes
+              </option>}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="action_reschedule_scheduled_date" className="text-sm opacity-70">Scheduled date:</label>
+            <select id="action_reschedule_scheduled_date" className="select" value={current.date} onChange={e => dispatchCurrent({ type: 'date', payload: e.currentTarget.value })}>
+              <option value={'...'} disabled>...</option>
+              {current.availableDates.map(date => <option value={date} key={date}>
+                {date}
+              </option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="action_reschedule_time" className="text-sm opacity-70">Scheduled time:</label>
+            <select id="action_reschedule_time" className="select" value={current.meeting} onChange={e => dispatchCurrent({ type: 'meeting', payload: e.currentTarget.value })}>
+              <option value={'...'} disabled>...</option>
+              {current.availableMeetings.map(meeting => <option value={meeting.$id} key={meeting.$id}>
+                {format(meeting.startTime, 'HH:mm')} - {format(meeting.endTime, 'HH:mm')}
+              </option>)}
+            </select>
+          </div>
         </div>
-        <div>
-          <label htmlFor="action_reschedule_recipient" className="text-sm opacity-70">{fetchedProfile.student ? 'Instructor' : 'Student'}:</label>
-          <select id="action_reschedule_recipient" className="select" value={current.recipient} onChange={e => dispatchCurrent({ type: 'recipient', payload: e.currentTarget.value })}>
-            <option value={'...'} disabled>...</option>
-            {recipients.map(recipient => <option value={recipient.$id} key={recipient.$id}>
-              {recipient.name}
-            </option>)}
-          </select>
+        <div className="flex-1 flex flex-col">
+          <div className="flex items-center space-x-2">
+            <p>Proposed</p>
+            {proposalValid && <div>
+              <CheckIcon className='size-4' />
+            </div>}
+          </div>
+          <div>
+            <label htmlFor="action_proposal_recipient" className="text-sm opacity-70">{fetchedProfile.student ? 'Instructor' : 'Student'}:</label>
+            <select id="action_proposal_recipient" className="select" disabled={!currentFound} value={proposal.recipient} onChange={e => dispatchProposal({ type: 'recipient', payload: e.currentTarget.value })}>
+              <option value={'...'} disabled>...</option>
+              {recipients.map(recipient => <option value={recipient.$id} key={recipient.$id}>
+                {recipient.name}
+              </option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="action_proposal_duration" className="text-sm opacity-70">Duration:</label>
+            <select id="action_proposal_duration" className="select" disabled={!currentFound} value={proposal.duration} onChange={e => dispatchProposal({ type: 'duration', payload: e.currentTarget.value })}>
+              <option value={'...'} disabled>...</option>
+              {proposal.availableDurations.map(duration => <option value={duration} key={duration}>
+                {duration} minutes
+              </option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="action_proposal_date" className="text-sm opacity-70">Proposal date:</label>
+            <select id="action_proposal_date" className="select" disabled={!currentFound} value={proposal.date} onChange={e => dispatchProposal({ type: 'date', payload: e.currentTarget.value })}>
+              <option value={'...'} disabled>...</option>
+              {proposal.availableDates.map(date => <option value={date} key={date}>
+                {date}
+              </option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="action_proposal_time" className="text-sm opacity-70">Proposal time:</label>
+            <select id="action_proposal_time" className="select" disabled={!currentFound} value={proposal.meeting} key={proposal.date} onChange={e => dispatchProposal({ type: 'meeting', payload: e.currentTarget.value })}>
+              <option value={'...'} disabled>...</option>
+              {proposal.availableMeetings[proposal.date]?.map(meetingStart => <option value={meetingStart.toString()} key={meetingStart}>
+                {format(meetingStart.toString(), 'HH:mm')}
+              </option>)}
+            </select>
+          </div>
         </div>
-        <div>
-          <label htmlFor="action_reschedule_duration" className="text-sm opacity-70">Duration:</label>
-          <select id="action_reschedule_duration" className="select" value={current.duration} onChange={e => {}}>
-            <option value={'...'} disabled>...</option>
-            {current.duration !== '...' && <option>
-              {current.duration} minutes
-            </option>}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="action_reschedule_scheduled_date" className="text-sm opacity-70">Scheduled date:</label>
-          <select id="action_reschedule_scheduled_date" className="select" value={current.date} onChange={e => dispatchCurrent({ type: 'date', payload: e.currentTarget.value })}>
-            <option value={'...'} disabled>...</option>
-            {current.availableDates.map(date => <option value={date} key={date}>
-              {date}
-            </option>)}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="action_reschedule_time" className="text-sm opacity-70">Scheduled time:</label>
-          <select id="action_reschedule_time" className="select" value={current.meeting} onChange={e => dispatchCurrent({ type: 'meeting', payload: e.currentTarget.value })}>
-            <option value={'...'} disabled>...</option>
-            {current.availableMeetings.map(meeting => <option value={meeting.$id} key={meeting.$id}>
-              {format(meeting.startTime, 'HH:mm')} - {format(meeting.endTime, 'HH:mm')}
-            </option>)}
-          </select>
-        </div>
-      </div>
-      <div className="flex-1 flex flex-col">
-        <div className="flex items-center space-x-2">
-          <p>Proposed</p>
-          {proposalValid && <div>
-            <CheckIcon className='size-4' />
-          </div>}
-        </div>
-        <div>
-          <label htmlFor="action_proposal_recipient" className="text-sm opacity-70">{fetchedProfile.student ? 'Instructor' : 'Student'}:</label>
-          <select id="action_proposal_recipient" className="select" disabled={!currentFound} value={proposal.recipient} onChange={e => dispatchProposal({ type: 'recipient', payload: e.currentTarget.value })}>
-            <option value={'...'} disabled>...</option>
-            {recipients.map(recipient => <option value={recipient.$id} key={recipient.$id}>
-              {recipient.name}
-            </option>)}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="action_proposal_duration" className="text-sm opacity-70">Duration:</label>
-          <select id="action_proposal_duration" className="select" disabled={!currentFound} value={proposal.duration} onChange={e => dispatchProposal({ type: 'duration', payload: e.currentTarget.value })}>
-            <option value={'...'} disabled>...</option>
-            {proposal.availableDurations.map(duration => <option value={duration} key={duration}>
-              {duration} minutes
-            </option>)}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="action_proposal_date" className="text-sm opacity-70">Proposal date:</label>
-          <select id="action_proposal_date" className="select" disabled={!currentFound} value={proposal.date} onChange={e => dispatchProposal({ type: 'date', payload: e.currentTarget.value })}>
-            <option value={'...'} disabled>...</option>
-            {proposal.availableDates.map(date => <option value={date} key={date}>
-              {date}
-            </option>)}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="action_proposal_time" className="text-sm opacity-70">Proposal time:</label>
-          <select id="action_proposal_time" className="select" disabled={!currentFound} value={proposal.meeting} key={proposal.date} onChange={e => dispatchProposal({ type: 'meeting', payload: e.currentTarget.value })}>
-            <option value={'...'} disabled>...</option>
-            {proposal.availableMeetings[proposal.date]?.map(meetingStart => <option value={meetingStart.toString()} key={meetingStart}>
-              {format(meetingStart.toString(), 'HH:mm')}
-            </option>)}
-          </select>
-        </div>
-      </div>
       </div>
       <div>
         <button className="btn btn-primary" disabled={!proposalValid} onClick={onSubmitClick}>Submit</button>
