@@ -27,7 +27,7 @@ function Shelf() {
         <NavLink role="tab" to='/shelf/actions' className={({ isActive }) => `tab ${isActive && 'tab-active'}`}>Action</NavLink>
         <NavLink role="tab" to='/shelf/classroom' className={({ isActive }) => `tab ${isActive && 'tab-active'}`}>Classroom</NavLink>
       </div>
-      <div className="flex-1 flex justify-center items-center min-h-80">
+      <div className="flex-1 flex justify-center items-center min-h-80 py-2">
         {meetings ? <Outlet context={{ classroom, meetings, fetchedProfile, fetchClassroom }} />
           : <span className="loading loading-spinner loading-md"></span>}
       </div>

@@ -344,7 +344,7 @@ async function getPrefs(classroomId) {
     const instructorsResult = await databases.listDocuments(DatabaseID, UsersID, [
       Query.equal('student', false),
       Query.equal('classroomId', classroomId),
-      Query.select('$id')
+      Query.select('$id'),
     ]);
 
     const result = await databases.listDocuments(DatabaseID, PrefsID, [

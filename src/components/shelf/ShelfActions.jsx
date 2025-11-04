@@ -28,11 +28,9 @@ function ShelfActions() {
     if (result.success) {
       const purePrefs = result.prefs.map(pref => {
         const schedule = JSON.parse(pref.schedule);
-        const holidays = pref.holidays.map(holiday => JSON.parse(holiday));
         return {
           ...pref,
           schedule,
-          holidays
         }
       });
 

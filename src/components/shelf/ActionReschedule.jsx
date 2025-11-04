@@ -1,9 +1,8 @@
 import { useReducer, useEffect, useState } from "react";
-import { useLocation, useOutletContext, useSearchParams } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 
-import { isPast, format, isSameDay, parse } from "date-fns";
+import { format } from "date-fns";
 
-import getTimeSlots from "../utils/getTimeSlots";
 import getDateSlots from "../utils/getDateSlots";
 
 import { CheckIcon } from "@heroicons/react/24/outline";
@@ -17,12 +16,14 @@ function reducerCurrent(state, action) {
       const recipient = action.payload;
       const availableMeetings = [];
       const availableDates = [];
+
       state.givenMeetings.forEach(meeting => {
         const startDate = format(meeting.startTime, 'yyyy-MM-dd');
         if (!availableDates.includes(startDate) && recipient === (state.isStudent ? meeting.instructorId : meeting.studentId)) {
           availableDates.push(startDate);
         }
       });
+
       return { ...state, availableMeetings, availableDates, recipient, meeting, date, duration }
     }
     case 'date': {
@@ -70,13 +71,24 @@ function reducerProposal(state, action) {
     case 'duration': {
       const meeting = '...';
       const date = '...';
-      const availableMeetings = [];
 
-      const duration = action.payload;
+      const duration = Number(action.payload);
 
-      const availableDates = getDateSlots(state, duration);
+      const availableMeetings = getDateSlots(state.givenMeetings, state.foundPref, duration);
+      const availableDates = Object.keys(availableMeetings);
 
-      return { ...state, duration, meeting, date, availableMeetings, availableDates }
+      return { ...state, duration, date, availableMeetings, meeting, availableDates }
+    }
+    case 'date': {
+      const meeting = '...';
+      const date = action.payload;
+
+      return { ...state, meeting, date }
+    }
+    case 'meeting': {
+      const meeting = action.payload;
+
+      return { ...state, meeting }
     }
   }
 }
@@ -86,6 +98,7 @@ function ActionReschedule() {
   const { fetchedProfile, meetings, classroom, recipients, instructorPrefs } = useOutletContext();
 
   const [currentFound, setCurrentFound] = useState(false);
+  const [proposalValid, setProposalValid] = useState(false);
 
   const [current, dispatchCurrent] = useReducer(reducerCurrent, {
     recipient: '...',
@@ -95,7 +108,9 @@ function ActionReschedule() {
     availableDates: [],
     availableMeetings: [],
     givenMeetings: meetings,
-    isStudent: fetchedProfile.student
+    isStudent: fetchedProfile.student,
+    instructorPrefs,
+    fetchedProfile
   });
 
   const [proposal, dispatchProposal] = useReducer(reducerProposal, {
@@ -113,8 +128,12 @@ function ActionReschedule() {
   });
 
   useEffect(() => {
-    console.log(proposal);
-  }, [proposal])
+  if (proposal.meeting) {
+    setProposalValid(true);
+  } else {
+    setProposalValid(false);
+  }
+  }, [proposal.meeting])
 
   useEffect(() => {
     const foundMeeting = meetings.find(meeting => current.meeting === meeting.$id);
@@ -140,8 +159,19 @@ function ActionReschedule() {
     }
   }, [meetings]);
 
+  async function onSubmitClick () {
+    const foundMeeting = meetings.find(meeting => current.meeting === meeting.$id);
+
+    if (foundMeeting && proposal.meeting !== '...') {
+      console.log(foundMeeting);
+      console.log(proposal.meeting.toString());
+      console.log(proposal.duration);
+    };
+  }
+
   return (
-    <div className="flex-1 flex justify-center">
+    <div className="flex-1 flex flex-col items-center space-y-4">
+      <div className="flex justify-center">
       <div className="flex-1 flex flex-col mx-4">
         <div className="flex items-center space-x-2">
           <p>Former</p>
@@ -187,8 +217,11 @@ function ActionReschedule() {
         </div>
       </div>
       <div className="flex-1 flex flex-col">
-        <div>
+        <div className="flex items-center space-x-2">
           <p>Proposed</p>
+          {proposalValid && <div>
+            <CheckIcon className='size-4' />
+          </div>}
         </div>
         <div>
           <label htmlFor="action_proposal_recipient" className="text-sm opacity-70">{fetchedProfile.student ? 'Instructor' : 'Student'}:</label>
@@ -209,8 +242,8 @@ function ActionReschedule() {
           </select>
         </div>
         <div>
-          <label htmlFor="action_proposal_scheduled_date" className="text-sm opacity-70">Scheduled date:</label>
-          <select id="action_proposal_scheduled_date" className="select" disabled={!currentFound} value={proposal.date} onChange={e => dispatchProposal({ type: 'date', payload: e.currentTarget.value })}>
+          <label htmlFor="action_proposal_date" className="text-sm opacity-70">Proposal date:</label>
+          <select id="action_proposal_date" className="select" disabled={!currentFound} value={proposal.date} onChange={e => dispatchProposal({ type: 'date', payload: e.currentTarget.value })}>
             <option value={'...'} disabled>...</option>
             {proposal.availableDates.map(date => <option value={date} key={date}>
               {date}
@@ -218,14 +251,18 @@ function ActionReschedule() {
           </select>
         </div>
         <div>
-          <label htmlFor="action_proposal_time" className="text-sm opacity-70">Scheduled time:</label>
-          <select id="action_proposal_time" className="select" disabled={!currentFound} value={proposal.meeting} onChange={e => dispatchProposal({ type: 'meeting', payload: e.currentTarget.value })}>
+          <label htmlFor="action_proposal_time" className="text-sm opacity-70">Proposal time:</label>
+          <select id="action_proposal_time" className="select" disabled={!currentFound} value={proposal.meeting} key={proposal.date} onChange={e => dispatchProposal({ type: 'meeting', payload: e.currentTarget.value })}>
             <option value={'...'} disabled>...</option>
-            {proposal.availableMeetings.map(meeting => <option value={meeting.$id} key={meeting.$id}>
-              {format(meeting.startTime, 'HH:mm')} - {format(meeting.endTime, 'HH:mm')}
+            {proposal.availableMeetings[proposal.date]?.map(meetingStart => <option value={meetingStart.toString()} key={meetingStart}>
+              {format(meetingStart.toString(), 'HH:mm')}
             </option>)}
           </select>
         </div>
+      </div>
+      </div>
+      <div>
+        <button className="btn btn-primary" disabled={!proposalValid} onClick={onSubmitClick}>Submit</button>
       </div>
     </div>
   )
