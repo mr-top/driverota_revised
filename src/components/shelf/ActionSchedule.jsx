@@ -1,9 +1,13 @@
-import { useReducer, useEffect, useState } from "react";
+import { useReducer, useEffect, useState, useContext} from "react";
 import { useOutletContext } from "react-router-dom";
 
 import { format } from "date-fns";
 
 import getDateSlots from "../utils/getDateSlots";
+
+import { createBooking } from "../../awConfig";
+
+import { NotificationContext } from "../../context/NotificationContext";
 
 import { CheckIcon } from "@heroicons/react/24/outline";
 
@@ -49,6 +53,7 @@ function reducerProposal(state, action) {
 }
 
 function ActionSchedule() {
+  const { addNotification } = useContext(NotificationContext);
   const { fetchedProfile, meetings, classroom, recipients, instructorPrefs } = useOutletContext();
 
   const [proposal, dispatchProposal] = useReducer(reducerProposal, {
@@ -77,8 +82,13 @@ function ActionSchedule() {
 
   async function onSubmitClick() {
     if (proposal.meeting !== '...') {
-      console.log(proposal.meeting.toString());
-      console.log(proposal.duration);
+      const result = await createBooking(proposal, proposal.duration, fetchedProfile.$id, classroom.$id);
+
+      if (result.success) {
+        addNotification({display: true, state: 'success', msg: 'Success!', subMsg: result.msg});
+      } else {
+        addNotification({display: true, state: 'error', msg: 'Failed!', subMsg: result.msg});
+      }
     }
   }
 
