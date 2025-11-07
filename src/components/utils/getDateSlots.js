@@ -44,7 +44,9 @@ function getDateSlots (meetings, pref, duration) {
       });
     });
 
-    possibleMeetings[format(date, 'yyyy-MM-dd')] = possibleStarts;
+    if (possibleStarts.length) {
+      possibleMeetings[format(date, 'yyyy-MM-dd')] = possibleStarts;
+    }
   });
 
   return possibleMeetings;
