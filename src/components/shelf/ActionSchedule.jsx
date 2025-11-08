@@ -85,9 +85,9 @@ function ActionSchedule() {
       const result = await createBooking(proposal, proposal.duration, fetchedProfile.$id, classroom.$id);
 
       if (result.success) {
-        addNotification({display: true, state: 'success', msg: 'Success!', subMsg: result.msg});
+        addNotification({display: true, state: 'success', msg: 'Success!', subMsg: result.msg, timer: true, seconds: 10});
       } else {
-        addNotification({display: true, state: 'error', msg: 'Failed!', subMsg: result.msg});
+        addNotification({display: true, state: 'error', msg: 'Failed!', subMsg: result.msg, timer: true, seconds: 10});
       }
     }
   }
