@@ -17,6 +17,7 @@ const updatePersonalFunctionID = env.VITE_UPDATE_PERSONAL_FUNCTION_ID;
 const changeClassroomFunctionID = env.VITE_CHANGE_CLASSROOM_FUNCTION_ID;
 const updateJstudentFunctionID = env.VITE_UPDATE_JSTUDENT_FUNCTION_ID;
 const createBookingFunctionID = env.VITE_CREATE_BOOKING_FUNCTION_ID;
+const cancelBookingFunctionID = env.VITE_CANCEL_REQUESTS_ID;
 
 const profileImagesStorageID = env.VITE_PROFILE_IMAGES_STORAGE_ID;
 const classroomImagesStorageID = env.VITE_CLASSROOM_IMAGES_STORAGE_ID;
@@ -378,9 +379,9 @@ async function updateJstudent(userId, classroomId) {
   }
 }
 
-async function createBooking({meeting, recipient}, duration, requesterId, classroomId) {
+async function createBooking({ meeting, recipient }, duration, requesterId, classroomId) {
   try {
-    const result = await functions.createExecution(createBookingFunctionID, 
+    const result = await functions.createExecution(createBookingFunctionID,
       JSON.stringify(
         {
           meeting: meeting,
@@ -388,6 +389,23 @@ async function createBooking({meeting, recipient}, duration, requesterId, classr
           recipient,
           requesterId,
           classroomId
+        }
+      )
+    ).then(result => JSON.parse(result.responseBody));
+
+    return result;
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
+async function cancelBooking(meetingId, requesterId) {
+  try {
+    const result = await functions.createExecution(cancelBookingFunctionID,
+      JSON.stringify(
+        {
+          meetingId,
+          requesterId
         }
       )
     ).then(result => JSON.parse(result.responseBody));
@@ -420,5 +438,6 @@ export {
   getPeople,
   getPrefs,
   updateJstudent,
-  createBooking
+  createBooking,
+  cancelBooking
 }

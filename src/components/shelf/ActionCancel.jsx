@@ -1,7 +1,11 @@
-import { useReducer, useEffect, useState } from "react";
+import { useReducer, useEffect, useState, useContext } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 
 import { format } from "date-fns";
+
+import { cancelBooking } from "../../awConfig";
+
+import { NotificationContext } from "../../context/NotificationContext";
 
 import { CheckIcon } from "@heroicons/react/24/outline";
 
@@ -12,15 +16,21 @@ function reducerCurrent(state, action) {
       const date = '...';
       const duration = '...';
       const recipient = action.payload;
-      const availableMeetings = [];
-      const availableDates = [];
+      const availableMeetings = {};
 
       state.givenMeetings.forEach(meeting => {
         const startDate = format(meeting.startTime, 'yyyy-MM-dd');
-        if (!availableDates.includes(startDate) && recipient === (state.isStudent ? meeting.instructorId : meeting.studentId)) {
-          availableDates.push(startDate);
+
+        if (state.isStudent ? (recipient === meeting.instructorId && meeting.studentId === state.fetchedProfile.$id) : (recipient === meeting.studentId)) {
+          if (availableMeetings[startDate]) {
+            availableMeetings[startDate].push(meeting);
+          } else {
+            availableMeetings[startDate] = [meeting];
+          }
         }
       });
+
+      const availableDates = Object.keys(availableMeetings);
 
       return { ...state, availableMeetings, availableDates, recipient, meeting, date, duration }
     }
@@ -28,18 +38,12 @@ function reducerCurrent(state, action) {
       const meeting = '...';
       const duration = '...';
       const date = action.payload;
-      const availableMeetings = [];
-      state.givenMeetings.forEach(meeting => {
-        const startDate = format(meeting.startTime, 'yyyy-MM-dd');
-        if (startDate === date) {
-          availableMeetings.push(meeting);
-        }
-      });
-      return { ...state, availableMeetings, date, meeting, duration }
+
+      return { ...state, date, meeting, duration }
     }
     case 'meeting': {
       const meetingId = action.payload;
-      const duration = state.givenMeetings.find(meeting => meeting.$id === meetingId).duration;
+      const duration = state.availableMeetings[state.date].find(meeting => meeting.$id === meetingId).duration;
 
       return { ...state, meeting: meetingId, duration }
     }
@@ -54,6 +58,8 @@ function ActionCancel() {
   const location = useLocation();
   const { fetchedProfile, meetings, classroom, recipients, instructorPrefs } = useOutletContext();
 
+  const { addNotification } = useContext(NotificationContext);
+
   const [currentFound, setCurrentFound] = useState(false);
 
   const [current, dispatchCurrent] = useReducer(reducerCurrent, {
@@ -62,7 +68,7 @@ function ActionCancel() {
     meeting: '...',
     duration: '...',
     availableDates: [],
-    availableMeetings: [],
+    availableMeetings: {},
     givenMeetings: meetings,
     isStudent: fetchedProfile.student,
     instructorPrefs,
@@ -97,7 +103,13 @@ function ActionCancel() {
     const foundMeeting = meetings.find(meeting => current.meeting === meeting.$id);
 
     if (foundMeeting) {
-      console.log(foundMeeting);
+      const result = await cancelBooking(foundMeeting.$id, fetchedProfile.$id);
+
+      if (result.success) {
+        addNotification({ display: true, state: 'success', msg: 'Success!', subMsg: result.msg, timer: true, seconds: 10 });
+      } else {
+        addNotification({ display: true, state: 'error', msg: 'Failed!', subMsg: result.msg, timer: true, seconds: 10 });
+      }
     };
   }
 
@@ -141,7 +153,7 @@ function ActionCancel() {
           <label htmlFor="action_cancel_time" className="text-sm opacity-70">Scheduled time:</label>
           <select id="action_cancel_time" className="select" value={current.meeting} onChange={e => dispatchCurrent({ type: 'meeting', payload: e.currentTarget.value })}>
             <option value={'...'} disabled>...</option>
-            {current.availableMeetings.map(meeting => <option value={meeting.$id} key={meeting.$id}>
+            {current.availableMeetings[current.date]?.map(meeting => <option value={meeting.$id} key={meeting.$id}>
               {format(meeting.startTime, 'HH:mm')} - {format(meeting.endTime, 'HH:mm')}
             </option>)}
           </select>

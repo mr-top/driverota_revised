@@ -106,7 +106,7 @@ function ActionReschedule() {
     meeting: '...',
     duration: '...',
     availableDates: [],
-    availableMeetings: [],
+    availableMeetings: {},
     givenMeetings: meetings,
     isStudent: fetchedProfile.student,
     instructorPrefs,
