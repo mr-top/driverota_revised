@@ -71,6 +71,7 @@ function ActionSchedule() {
   });
 
   const [proposalValid, setProposalValid] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (proposal.meeting !== '...') {
@@ -81,6 +82,7 @@ function ActionSchedule() {
   }, [proposal.meeting]);
 
   async function onSubmitClick() {
+    setLoading(true);
     if (proposal.meeting !== '...') {
       const result = await createBooking(proposal, proposal.duration, fetchedProfile.$id, classroom.$id);
 
@@ -90,6 +92,7 @@ function ActionSchedule() {
         addNotification({display: true, state: 'error', msg: 'Failed!', subMsg: result.msg, timer: true, seconds: 10});
       }
     }
+    setLoading(false);
   }
 
   return (
@@ -139,7 +142,7 @@ function ActionSchedule() {
         </div>
       </div>
       <div>
-        <button className="btn btn-primary" disabled={!proposalValid} onClick={onSubmitClick}>Submit</button>
+        <button className="btn btn-primary" disabled={!proposalValid || loading} onClick={onSubmitClick}>Submit</button>
       </div>
     </div>
   )
