@@ -90,6 +90,15 @@ function reducerProposal(state, action) {
 
       return { ...state, meeting }
     }
+    case 'filter_meetings': {
+      const meeting = '...';
+      const date = '...';
+      const duration = '...';
+      const meetingId = action.payload;
+      const givenMeetings = state.givenMeetings.filter(meeting => meeting.$id !== meetingId);
+      
+      return { ...state, givenMeetings, meeting, date, duration }
+    }
   }
 }
 
@@ -140,6 +149,7 @@ function ActionReschedule() {
 
     if (foundMeeting) {
       setCurrentFound(true);
+      dispatchProposal({type: 'filter_meetings', payload: current.meeting});
     } else {
       setCurrentFound(false);
     }
