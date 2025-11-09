@@ -4,7 +4,7 @@ import { Outlet, NavLink, useOutletContext } from "react-router-dom";
 import { getPeople, getPrefs } from "../../awConfig";
 
 function ShelfActions() {
-  const { fetchedProfile, meetings, classroom } = useOutletContext();
+  const { fetchedProfile, meetings, classroom, fetchMeetings } = useOutletContext();
 
   const [recipients, setRecipients] = useState();
   const [instructorPrefs, setInstructorPrefs] = useState();
@@ -53,7 +53,7 @@ function ShelfActions() {
           }
         </div>
       </div>
-      {(recipients && instructorPrefs) ? <Outlet context={{ fetchedProfile, meetings, classroom, recipients, instructorPrefs }} />
+      {(recipients && instructorPrefs) ? <Outlet context={{ fetchedProfile, meetings, classroom, recipients, instructorPrefs, fetchMeetings }} />
         : <div className="flex-1 flex items-center justify-center">
           <span className="loading loading-spinner loading-md"></span>
           </div>}

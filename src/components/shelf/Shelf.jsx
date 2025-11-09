@@ -7,17 +7,20 @@ function Shelf() {
   const { classroom, fetchedProfile, fetchClassroom } = useOutletContext();
 
   const [meetings, setMeetings] = useState();
+  const [meetingsLoading, setMeetingsLoading] = useState(false);
 
   useEffect(() => {
     fetchMeetings();
   }, []);
 
   async function fetchMeetings() {
+    setMeetingsLoading(true);
     const result = await getMeetings(classroom.$id);
 
     if (result.success) {
       setMeetings(result.meetings);
     }
+    setMeetingsLoading(false);
   }
 
   return (
@@ -28,7 +31,7 @@ function Shelf() {
         <NavLink role="tab" to='/shelf/classroom' className={({ isActive }) => `tab ${isActive && 'tab-active'}`}>Classroom</NavLink>
       </div>
       <div className="flex-1 flex justify-center items-center min-h-80 py-2">
-        {meetings ? <Outlet context={{ classroom, meetings, fetchedProfile, fetchClassroom }} />
+        {(!meetingsLoading && meetings) ? <Outlet context={{ classroom, meetings, fetchedProfile, fetchClassroom, fetchMeetings }} />
           : <span className="loading loading-spinner loading-md"></span>}
       </div>
     </div>

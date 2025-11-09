@@ -109,7 +109,7 @@ function reducerProposal(state, action) {
 function ActionReschedule() {
   const location = useLocation();
   const { addNotification } = useContext(NotificationContext);
-  const { fetchedProfile, meetings, classroom, recipients, instructorPrefs } = useOutletContext();
+  const { fetchedProfile, meetings, classroom, recipients, instructorPrefs, fetchMeetings } = useOutletContext();
 
   const [currentFound, setCurrentFound] = useState(false);
   const [proposalValid, setProposalValid] = useState(false);
@@ -183,6 +183,7 @@ function ActionReschedule() {
       const result = await changeBookings(proposal, proposal.duration, fetchedProfile.$id, classroom.$id, foundMeeting.$id);
 
       if (result.success) {
+        await fetchMeetings();
         addNotification({display: true, state: 'success', msg: 'Success!', subMsg: result.msg, timer: true, seconds: 10});
       } else {
         addNotification({display: true, state: 'error', msg: 'Failed!', subMsg: result.msg, timer: true, seconds: 10});
