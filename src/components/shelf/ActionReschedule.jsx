@@ -1,9 +1,13 @@
-import { useReducer, useEffect, useState } from "react";
+import { useReducer, useEffect, useState, useContext } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 
 import { format } from "date-fns";
 
+import { changeBookings } from "../../awConfig";
+
 import getDateSlots from "../utils/getDateSlots";
+
+import { NotificationContext } from "../../context/NotificationContext";
 
 import { CheckIcon } from "@heroicons/react/24/outline";
 
@@ -104,10 +108,12 @@ function reducerProposal(state, action) {
 
 function ActionReschedule() {
   const location = useLocation();
+  const { addNotification } = useContext(NotificationContext);
   const { fetchedProfile, meetings, classroom, recipients, instructorPrefs } = useOutletContext();
 
   const [currentFound, setCurrentFound] = useState(false);
   const [proposalValid, setProposalValid] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [current, dispatchCurrent] = useReducer(reducerCurrent, {
     recipient: '...',
@@ -170,13 +176,19 @@ function ActionReschedule() {
   }, [meetings]);
 
   async function onSubmitClick() {
+    setLoading(true);
     const foundMeeting = meetings.find(meeting => current.meeting === meeting.$id);
 
     if (foundMeeting && proposal.meeting !== '...') {
-      console.log(foundMeeting);
-      console.log(proposal.meeting.toString());
-      console.log(proposal.duration);
+      const result = await changeBookings(proposal, proposal.duration, fetchedProfile.$id, classroom.$id, foundMeeting.$id);
+
+      if (result.success) {
+        addNotification({display: true, state: 'success', msg: 'Success!', subMsg: result.msg, timer: true, seconds: 10});
+      } else {
+        addNotification({display: true, state: 'error', msg: 'Failed!', subMsg: result.msg, timer: true, seconds: 10});
+      }
     };
+    setLoading(false);
   }
 
   return (
@@ -272,7 +284,7 @@ function ActionReschedule() {
         </div>
       </div>
       <div>
-        <button className="btn btn-primary" disabled={!proposalValid} onClick={onSubmitClick}>Submit</button>
+        <button className="btn btn-primary" disabled={!proposalValid || loading} onClick={onSubmitClick}>Submit</button>
       </div>
     </div>
   )

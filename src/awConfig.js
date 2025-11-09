@@ -18,6 +18,7 @@ const changeClassroomFunctionID = env.VITE_CHANGE_CLASSROOM_FUNCTION_ID;
 const updateJstudentFunctionID = env.VITE_UPDATE_JSTUDENT_FUNCTION_ID;
 const createBookingFunctionID = env.VITE_CREATE_BOOKING_FUNCTION_ID;
 const cancelBookingFunctionID = env.VITE_CANCEL_REQUESTS_ID;
+const changeBookingsFunctionID = env.VITE_CHANGE_MEETINGS_FUNCTION_ID;
 
 const profileImagesStorageID = env.VITE_PROFILE_IMAGES_STORAGE_ID;
 const classroomImagesStorageID = env.VITE_CLASSROOM_IMAGES_STORAGE_ID;
@@ -416,6 +417,27 @@ async function cancelBooking(meetingId, requesterId) {
   }
 }
 
+async function changeBookings({ meeting, recipient }, duration, requesterId, classroomId, oldMeetingId) {
+  try {
+    const result = await functions.createExecution(changeBookingsFunctionID,
+      JSON.stringify(
+        {
+          meeting: meeting,
+          duration: Number(duration),
+          recipient,
+          requesterId,
+          classroomId,
+          oldMeetingId
+        }
+      )
+    ).then(result => JSON.parse(result.responseBody));
+
+    return result;
+  } catch (error) {
+    return { success: false, msg: error.message }
+  }
+}
+
 export {
   ping,
   deleteSession,
@@ -439,5 +461,6 @@ export {
   getPrefs,
   updateJstudent,
   createBooking,
-  cancelBooking
+  cancelBooking,
+  changeBookings
 }
