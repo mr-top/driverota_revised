@@ -61,6 +61,7 @@ function ActionCancel() {
   const { addNotification } = useContext(NotificationContext);
 
   const [currentFound, setCurrentFound] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [current, dispatchCurrent] = useReducer(reducerCurrent, {
     recipient: '...',
@@ -100,6 +101,7 @@ function ActionCancel() {
   }, [meetings]);
 
   async function onSubmitClick() {
+    setLoading(true);
     const foundMeeting = meetings.find(meeting => current.meeting === meeting.$id);
 
     if (foundMeeting) {
@@ -111,6 +113,7 @@ function ActionCancel() {
         addNotification({ display: true, state: 'error', msg: 'Failed!', subMsg: result.msg, timer: true, seconds: 10 });
       }
     };
+    setLoading(false);
   }
 
   return (
@@ -160,7 +163,7 @@ function ActionCancel() {
         </div>
       </div>
       <div>
-        <button className="btn btn-primary" disabled={!currentFound} onClick={onSubmitClick}>Submit</button>
+        <button className="btn btn-primary" disabled={!currentFound || loading} onClick={onSubmitClick}>Submit</button>
       </div>
     </div>
   )
