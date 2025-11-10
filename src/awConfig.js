@@ -77,12 +77,13 @@ async function createSession(email, password) {
   }
 }
 
-async function createUser(credentials) {
+async function createUser(credentials, timezone) {
   try {
     const result = await functions.createExecution(createUserFunctionID,
       JSON.stringify(
         {
-          credentials
+          credentials,
+          timezone
         }
       )
     ).then(result => JSON.parse(result.responseBody));

@@ -68,7 +68,9 @@ function Signup() {
 
       if (!allInputValid) throw Error('Sorry! Not all inputs are correct');
 
-      const result = await createUser(credentials);
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      const result = await createUser(credentials, timezone);
 
       if (result.success) {
         addNotification({ display: true, state: 'success', msg: result.msg, timer: true, seconds: 15 });
