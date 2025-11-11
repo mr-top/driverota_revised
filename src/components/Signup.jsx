@@ -19,8 +19,8 @@ function reducerCredentials(state, action) {
       return { ...state, password: action.payload, passwordValid: verifyPassword(action.payload) }
     case 'password2':
       return { ...state, password2: action.payload, password2Valid: verifyPassword(action.payload) && state.password === action.payload }
-    case 'instructorCode':
-      return { ...state, instructorCode: action.payload, instructorCodeValid: verifyCode(action.payload) }
+    case 'classroomCode':
+      return { ...state, classroomCode: action.payload, classroomCodeValid: verifyCode(action.payload) }
     case 'student':
       return { ...state, student: !state.student }
   }
@@ -48,7 +48,7 @@ function Signup() {
     code: '',
     password: '',
     password2: '',
-    instructorCode: '',
+    classroomCode: '',
     student: true
   });
 
@@ -64,7 +64,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const allInputValid = credentials.nameValid && credentials.emailValid && credentials.passwordValid && credentials.password2Valid && (credentials.instructorCodeValid || !credentials.student);
+      const allInputValid = credentials.nameValid && credentials.emailValid && credentials.passwordValid && credentials.password2Valid && (credentials.classroomCodeValid || !credentials.student);
 
       if (!allInputValid) throw Error('Sorry! Not all inputs are correct');
 
@@ -148,8 +148,8 @@ function Signup() {
         </div>
         {credentials.student &&
           <div className="flex flex-col">
-            <label htmlFor="signup_code" className="text-sm opacity-70">Instructor code:</label>
-            <input id='signup_code' type="text" className={`input ${credentials.instructorCode && (!credentials.instructorCodeValid && 'border-1 border-error')}`} value={credentials.instructorCode} onChange={e => dispatchCredentials({ type: 'instructorCode', payload: e.currentTarget.value })} />
+            <label htmlFor="signup_code" className="text-sm opacity-70">Classroom code:</label>
+            <input id='signup_code' type="text" className={`input ${credentials.classroomCode && (!credentials.classroomCodeValid && 'border-1 border-error')}`} value={credentials.classroomCode} onChange={e => dispatchCredentials({ type: 'classroomCode', payload: e.currentTarget.value })} />
           </div>
         }
         <div className="flex space-x-4">
